@@ -26,8 +26,17 @@
     <Compile Include="Camera.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mesh.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SplineProject.py" />
-    <Compile Include="Turtle3D.py">
+    <Compile Include="Vector2D.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Vector3D.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Vector4D.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
