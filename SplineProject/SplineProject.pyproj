@@ -30,6 +30,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SplineProject.py" />
+    <Compile Include="vecpy.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Vector2D.py">
       <SubType>Code</SubType>
     </Compile>
