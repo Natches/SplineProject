@@ -3,6 +3,8 @@ from tkinter import Tk
 from Camera import Camera
 import turtle
 from turtle import Turtle
+from Vector2D import Vector2D
+from Matrix4x4 import Matrix4x4
 
 if __name__ == "__main__":
 	cam = Camera()
