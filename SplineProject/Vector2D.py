@@ -38,6 +38,9 @@ class Vector2D(object):
 		self.__value /= other.__value
 		return self.__value
 
+	def __neg__(self, other):
+		return -other.__value
+
 	def dot(self, other='Vector2D') -> float:
 		return np.dot(self.__value, other.__value)
 

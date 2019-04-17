@@ -1,4 +1,5 @@
 import numpy as np
+from math3d import Matrix4x4, Vector3D, Vector4D, Vector2D
 
 class Camera(object):
 	__dirty = False
@@ -8,14 +9,14 @@ class Camera(object):
 	__nearZ = 0.0
 	__farZ = 0.0		
 
-	__eye = np.zeros(3)
-	__at = np.zeros(3)
-	__up = np.zeros(3)
+	__eye = Vector3D()
+	__at = Vector3D()
+	__up = Vector3D()
 
-	__view_Matrix = np.eye(4, 4)
-	__perspective_Matrix = np.eye(4, 4)
+	__view_Matrix = Matrix4x4()
+	__perspective_Matrix = Matrix4x4()
 
-	__VP = np.eye(4, 4);
+	__VP = Matrix4x4();
 
 	def ViewPerspective(self):
 		if(self.__dirty):
@@ -30,7 +31,7 @@ class Camera(object):
 		self.__BuildPerspective()
 		self.__dirty = True
 
-	def UpdateView(self, eye = np.zeros(3), at = np.zeros(3), up =  np.zeros(3)):
+	def UpdateView(self, eye=Vector3D, at=Vector3D, up=Vector3D):
 		self.__eye = eye
 		self.__at = at
 		self.__up = up
@@ -38,34 +39,28 @@ class Camera(object):
 		self.__dirty = True
 
 	def __BuildView(self):
-		dir = self.__eye - self.__at
-		zc = dir / np.linalg.norm(dir, ord=1);
-		cross = np.cross(self.__up, zc)
-		xc = cross / np.linalg.norm(cross, ord=1);
-		yc = np.cross(zc, xc);
-		self.__view_Matrix = np.array([[xc[0], xc[1], xc[2], np.dot(-self.__eye, xc)],
-						 [yc[0], yc[1], yc[2], np.dot(-self.__eye, yc)],
-						 [zc[0], zc[1], zc[2], np.dot(-self.__eye, zc)],
+		zc = (self.__eye - self.__at).normalize();
+		xc = self.__up.cross(zc).normalize()
+		yc = zc.cross(xc);
+		self.__view_Matrix = Matrix4x4([[xc.x(), xc.y(), xc.z(), (-self.__eye).dot(xc)],
+						 [yc.x(), yc.y(), yc.z(), (-self.__eye).dot(yc)],
+						 [zc.x(), zc.y(), zc.z(), (-self.__eye).dot(zc)],
 						 [0,0,0,1]])
 
 	def __BuildPerspective(self):
 		tanHalfFov = np.tan(np.radians(self.__fov * 0.5));
 		inv_tan = 1.0 / tanHalfFov;
 		inv_fsubn = -1.0 / (self.__farZ - self.__nearZ);
-		self.__perspective_Matrix = np.array([[inv_tan / self.__aspect, 0.0, 0.0, 0.0],
+		self.__perspective_Matrix = Matrix4x4([[inv_tan / self.__aspect, 0.0, 0.0, 0.0],
 										[0.0, inv_tan, 0.0, 0.0],
 										[0.0, 0.0, inv_fsubn * (self.__farZ + self.__nearZ), inv_fsubn * (self.__farZ * self.__nearZ) * 2.0],
 										[0.0, 0.0, -1.0, 0.0]]);
 
 	def __BuildVP(self):
-		self.__VP = np.matmul(self.__perspective_Matrix, self.__view_Matrix)
+		self.__VP = self.__perspective_Matrix * self.__view_Matrix
 
-	def TransformPoint(self, point=np.zeros(4)):
-		return np.matmul(self.ViewPerspective(), point)
-
-	def From3DSpaceToScreen(self, point=np.zeros(4)):
-		#point = np.matmul(np.linalg.inv(self.ViewPerspective()), point)
-		return np.array([point[0] / point[2], point[1] / point[2]])
+def From3DSpaceToScreen(point=Vector3D, width=int, height=int) -> Vector2D:
+	return Vector2D((point.x() / point.z()) * width, (point.y() / point.z()) * height)
 		
 
 

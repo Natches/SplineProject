@@ -32,8 +32,11 @@
     <Compile Include="Mesh.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Quaternion.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SplineProject.py" />
-    <Compile Include="vecpy.py">
+    <Compile Include="math3d.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Vector2D.py">
