@@ -53,7 +53,7 @@ class Vector3D(object):
 		return Vector3D.fromArray(np.cross(self.__value, other.__value))
 
 	def norm(self) -> float:
-		return np.linalg.norm(self.__value, ord=1)
+		return np.linalg.norm(self.__value)
 
 	def normalize(self) -> Vector3D:
 		return Vector3D.fromArray(self.__value / self.norm())

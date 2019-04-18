@@ -45,7 +45,7 @@ class Vector2D(object):
 		return np.dot(self.__value, other.__value)
 
 	def norm(self) -> float:
-		return np.linalg.norm(self.__value, ord=1)
+		return np.linalg.norm(self.__value)
 
 	def normalize(self) -> Vector2D:
 		return self.__value / self.norm()
