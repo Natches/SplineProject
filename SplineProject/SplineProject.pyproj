@@ -35,6 +35,12 @@
     <Compile Include="Quaternion.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Renderer.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scene.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SplineProject.py" />
     <Compile Include="math3d.py">
       <SubType>Code</SubType>
