@@ -38,6 +38,15 @@ class Camera(object):
 		self.__BuildView();
 		self.__dirty = True
 
+	def eye(self) -> Vector3D:
+		return self.__eye
+
+	def at(self) -> Vector3D:
+		return self.__at
+
+	def up(self) -> Vector3D:
+		return self.__up
+
 	def __BuildView(self):
 		zc = (self.__eye - self.__at).normalize();
 		xc = self.__up.cross(zc).normalize()
