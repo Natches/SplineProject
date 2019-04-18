@@ -58,6 +58,8 @@ class Mesh(object):
 		pen.setpos(point.x(), point.y())
 		pen.pd()
 		for idx in self.__indices:
-			point = cam.From3DSpaceToScreen((mvp.mulVec4(self.__vertex[idx])).xyz(), width, height)
-			pen.setpos(point.x(), point.y())
+			position = (mvp.mulVec4(self.__vertex[idx])).xyz()
+			if((position - camera.eye()).normalize().dot(camera.at()) > 0):
+				point = cam.From3DSpaceToScreen(position, width, height)
+				pen.setpos(point.x(), point.y())
 		pen.pu()

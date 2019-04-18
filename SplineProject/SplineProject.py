@@ -11,11 +11,8 @@ import datetime as time
 def InitCamera() -> Camera:
 	cam = Camera()
 	cam.UpdatePerspective(60, 16/9, 1, 100)
-	cam.UpdateView(Vector3D(0, 5, 10), Vector3D(0.0, 0.0, 0.0), Vector3D(0.0, 1, 0.0))
+	cam.UpdateView(Vector3D(0, 0, -10), Vector3D(0, 0.0, 0), Vector3D(0.0, 1, 0.0))
 	return cam
-
-def print():
-	pass
 
 if __name__ == "__main__":
 	mesh = Mesh([Vector4D(1, 1, 1, 1),
@@ -29,31 +26,60 @@ if __name__ == "__main__":
 	scene = Scene()
 	camera = InitCamera()
 	scene.setCamera(camera)
-	scene += mesh
-	mesh.UpdatePosition(Vector3D(1, 0, 0))
-	scene += mesh
-	mesh.UpdatePosition(Vector3D(-1, 0, 0))
+	mesh.UpdatePosition(Vector3D(0,0,-20))
 	scene += mesh
 	renderer = Renderer(640, 360, 0)
 	deltatime = 0.001
-	speed = 100
+	speed = 500	
+
+	def MoveCameraUp(event):
+		up = Vector3D(0,1,0).floatMul(deltatime).floatMul(speed)
+		camera.UpdateView((camera.eye() + up), camera.at() + up, camera.up())
+
+	def MoveCameraDown(event):
+		up = Vector3D(0,1,0).floatMul(deltatime).floatMul(speed)
+		camera.UpdateView((camera.eye() - up), camera.at() - up, camera.up())
+
+	def MoveCameraForward(event):
+		dir = (camera.at() - camera.eye()).normalize().floatMul(deltatime).floatMul(speed)
+		camera.UpdateView(camera.eye() + dir, camera.at() + dir, camera.up())
+		print(dir._Vector3D__value.__str__())
+		print(camera.eye()._Vector3D__value.__str__())
+		print(camera.at()._Vector3D__value.__str__())
+
+	def MoveCameraBackward(event):
+		dir = (camera.at() - camera.eye()).normalize().floatMul(deltatime).floatMul(speed)
+		camera.UpdateView(camera.eye() - dir, camera.at() - dir, camera.up())
+
 	def MoveCameraRight(event):
-		right = (camera.at() - camera.eye()).normalize().cross(camera.up()).normalize().floatMul(deltatime).floatMul(speed)
-		camera.UpdateView(camera.eye() + right, camera.at(), camera.up())
+		dir = (camera.at() - camera.eye())
+		right = dir.normalize().cross(camera.up()).floatMul(deltatime).floatMul(speed)
+		camera.UpdateView(camera.eye() + right, camera.at() + right, camera.up())
 
 	def MoveCameraLeft(event):
-		right = (camera.at() - camera.eye()).normalize().cross(camera.up()).normalize().floatMul(deltatime).floatMul(speed)
-		camera.UpdateView(camera.eye() - left, camera.at(), camera.up())
-	MoveCameraRight(None)
-	renderer.pen().screen.getcanvas().bind("q", MoveCameraLeft)
-	#renderer.pen().screen.getcanvas().bind("d", MoveCameraRight)
-	renderer.pen().screen.listen()
-	while(True):
+		dir = (camera.at() - camera.eye())
+		right = dir.normalize().cross(camera.up()).floatMul(deltatime).floatMul(speed)
+		camera.UpdateView(camera.eye() - right, camera.at() - right, camera.up())
+
+	renderer.pen().screen.getcanvas().bind("w", MoveCameraForward)
+	renderer.pen().screen.getcanvas().bind("s", MoveCameraBackward)
+	renderer.pen().screen.getcanvas().bind("q", MoveCameraUp)
+	renderer.pen().screen.getcanvas().bind("e", MoveCameraDown)
+	renderer.pen().screen.getcanvas().bind("a", MoveCameraLeft)
+	renderer.pen().screen.getcanvas().bind("d", MoveCameraRight)
+
+	def render():
 		timeNow = time.datetime.now()
 		renderer.Clear()
 		renderer.Render(scene)
+		renderer.pen().pd()
+		renderer.pen().setpos(0, 0)
+		renderer.pen().setpos(0, 10)
 		renderer.SwapBuffer()
 		deltatime = (time.datetime.now() - timeNow).microseconds / 1000000
+		renderer.pen().screen.ontimer(render, 16)
+	renderer.pen().screen.ontimer(render, 16)
+	renderer.pen().screen.listen()
 
-turtle.mainloop()
+renderer.pen().screen.mainloop()
 	
