@@ -1,86 +1,100 @@
 from __future__ import annotations
 import numpy as np
 from Vector2D import Vector2D
+import Utils
 
 class Vector3D(object):
 	__value = np.zeros(3)
 
-	def __init__(self, x=0.0, y=0.0, z=0.0):
-		self.__value = np.array([x, y, z])
+	def __init__(self, array=[0, 0, 0]):
+		np.copyto(self.__value, array)
 
-	@classmethod
-	def fromArray(cls, array=[0, 0, 0]) -> Vector3D:
-		return cls(array[0], array[1], array[2])
-
-	def __add__(self, other='Vector3D') -> Vector3D:
-		return Vector3D.fromArray(self.__value + other.__value)
-
-	def __sub__(self, other='Vector3D') -> Vector3D:
-		return Vector3D.fromArray(self.__value - other.__value)
-
-	def __mul__(self, other='Vector3D') -> Vector3D:
-		return Vector3D.fromArray(self.__value * other.__value)
-
-	def floatMul(self, other=float) -> Vector3D:
-		return Vector3D.fromArray(self.__value * other)
-
-	def __div__(self, other='Vector3D') -> Vector3D:
-		return Vector3D.fromArray(self.__value / other.__value)
-
-	def __iadd__(self, other='Vector3D') -> Vector3D:
-		self.__value += other.__value
+	@Utils.operatorDecorator
+	def __add__(self, other) -> Vector3D:
+		return Vector3D(self.__value + other)
+	
+	@Utils.operatorDecorator
+	def __sub__(self, other) -> Vector3D:
+		return Vector3D(self.__value - other)
+	
+	@Utils.operatorDecorator
+	def __mul__(self, other) -> Vector3D:
+		return Vector3D(self.__value * other)
+	
+	@Utils.operatorDecorator
+	def __div__(self, other) -> Vector3D:
+		return Vector3D(self.__value / other)
+	
+	@Utils.operatorDecorator
+	def __iadd__(self, other) -> Vector3D:
+		self.__value += other
 		return self
 
-	def __isub__(self, other='Vector3D') -> Vector3D:
-		self.__value -= other.__value
+	@Utils.operatorDecorator
+	def __isub__(self, other) -> Vector3D:
+		self.__value -= other
 		return self
 
-	def __imul__(self, other='Vector3D') -> Vector3D:
-		self.__value *= other.__value
+	@Utils.operatorDecorator
+	def __imul__(self, other) -> Vector3D:
+		self.__value *= other
 		return self
 
-	def __idiv__(self, other='Vector3D') -> Vector3D:
-		self.__value /= other.__value
+	@Utils.operatorDecorator
+	def __idiv__(self, other) -> Vector3D:
+		self.__value /= other
 		return self
 
-	def __neg__(self):
-		return Vector3D.fromArray(-self.__value)
+	def __neg__(self) -> Vector3D:
+		return Vector3D(-self.__value)
 
 	def dot(self, other='Vector3D') -> float:
 		return np.dot(self.__value, other.__value)
 
 	def cross(self, other='Vector3D') -> Vector3D:
-		return Vector3D.fromArray(np.cross(self.__value, other.__value))
+		return Vector3D(np.cross(self.__value, other.__value))
 
 	def norm(self) -> float:
 		return np.linalg.norm(self.__value)
 
 	def normalize(self) -> Vector3D:
-		return Vector3D.fromArray(self.__value / self.norm())
-
-	def inormalize(self) -> Vector3D:
-		self.__value /= self.norm()
+		self /= self.norm()
 		return self
 
+	@property
 	def x(self) -> float:
 		return self.__value[0]
 
+	@property
 	def y(self) -> float:
 		return self.__value[1]
 
+	@property
 	def z(self) -> float:
 		return self.__value[2]
 
+	@property
 	def xy(self) -> Vector2D:
-		return Vector2D(self.x(), self.y())
+		return self.__value[0:2]
 
-	def xz(self) -> Vector2D:
-		return Vector2D(self.x(), self.z())
-
+	@property
 	def yz(self) -> Vector2D:
-		return Vector2D(self.y(), self.z())
+		return self.__value[1:3]
 
-	def value(self):
+	@x.setter
+	def x(self, value) -> None:
+		self.__value[0] = value
+
+	@y.setter
+	def y(self, value) -> None:
+		self.__value[1] = value
+
+	@z.setter
+	def z(self, value) -> None:
+		self.__value[2] = value
+
+	@property
+	def value(self) -> np.ndarray:
 		return self.__value
 
 

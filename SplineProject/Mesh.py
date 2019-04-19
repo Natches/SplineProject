@@ -6,9 +6,9 @@ import math
 
 class Mesh(object):
 	__dirty = True
-	__rotation = Quaternion(Vector4D(0, 0, 0, 1))
-	__position = Vector3D(0, 0, 0)
-	__scale = Vector3D(1, 1, 1)
+	__rotation = Quaternion(Vector4D([0, 0, 0, 1]))
+	__position = Vector3D([0, 0, 0])
+	__scale = Vector3D([1, 1, 1])
 
 	__modelMx = Matrix4x4()
 	__vertex = [Vector4D]

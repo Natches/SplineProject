@@ -1,54 +1,57 @@
 from __future__ import annotations
 import numpy as np
 from Vector3D import Vector3D
+import Utils
 
 class Vector4D(object):
+
 	__value = np.zeros(4)
 
-	def __init__(self, x=0.0, y=0.0, z=0.0, w=0.0):
-		self.__value = np.array([x, y, z, w])
+	def __init__(self, array=[0, 0, 0, 0]):
+		np.copyto(self.__value, array)
 	
 	@classmethod
 	def fromVector3(cls, vec3=Vector3D, w=1.0):
 		return cls(vec3.x(), vec3.y(), vec3.z(), w)
 
-	@classmethod
-	def fromArray(cls, array=[0, 0, 0, 0]):
-		return cls(array[0], array[1], array[2], array[3])
+	@Utils.operatorDecorator
+	def __add__(self, other) -> Vector4D:
+		return Vector4D(self.__value + other)
 
-	def __add__(self, other='Vector4D') -> Vector4D:
-		return Vector4D.fromArray(self.__value + other.__value)
+	@Utils.operatorDecorator
+	def __sub__(self, other) -> Vector4D:
+		return Vector4D(self.__value - other)
 
-	def __sub__(self, other='Vector4D') -> Vector4D:
-		return Vector4D.fromArray(self.__value - other.__value)
+	@Utils.operatorDecorator
+	def __mul__(self, other) -> Vector4D:
+		return Vector4D(self.__value * other)
 
-	def __mul__(self, other='Vector4D') -> Vector4D:
-		return Vector4D.fromArray(self.__value * other.__value)
+	@Utils.operatorDecorator
+	def __div__(self, other) -> Vector4D:
+		return Vector4D(self.__value / other)
 
-	def floatMul(self, other=float) -> Vector4D:
-		return Vector4D.fromArray(self.__value * other)
-
-	def __div__(self, other='Vector4D') -> Vector4D:
-		return Vector4D.fromArray(self.__value / other.__value)
-
-	def __iadd__(self, other='Vector4D') -> Vector4D:
-		self.__value += other.__value
+	@Utils.operatorDecorator
+	def __iadd__(self, other) -> Vector4D:
+		self.__value += other
 		return self
 
-	def __isub__(self, other='Vector4D') -> Vector4D:
-		self.__value -= other.__value
+	@Utils.operatorDecorator
+	def __isub__(self, other) -> Vector4D:
+		self.__value -= other
 		return self
 
-	def __imul__(self, other='Vector4D') -> Vector4D:
-		self.__value *= other.__value
+	@Utils.operatorDecorator
+	def __imul__(self, other) -> Vector4D:
+		self.__value *= other
 		return self
 
-	def __idiv__(self, other='Vector4D') -> Vector4D:
-		self.__value /= other.__value
+	@Utils.operatorDecorator
+	def __idiv__(self, other) -> Vector4D:
+		self.__value /= other
 		return self
 
-	def __neg__(self):
-		return Vector4D.fromArray(-self.__value)
+	def __neg__(self) -> Vector4D:
+		return Vector4D(-self.__value)
 
 	def dot(self, other='Vector4D') -> float:
 		return np.dot(self.__value, other.__value)
@@ -57,28 +60,46 @@ class Vector4D(object):
 		return np.linalg.norm(self.__value)
 
 	def normalize(self) -> Vector4D:
-		return Vector4D.fromArray(self.__value / self.norm())
-
-	def inormalize(self) -> Vector4D:
 		self.__value /= self.norm()
 		return self
 
+	@property
 	def x(self) -> float:
 		return self.__value[0]
 
+	@property
 	def y(self) -> float:
 		return self.__value[1]
 
+	@property
 	def z(self) -> float:
 		return self.__value[2]
 
+	@property
 	def w(self) -> float:
 		return self.__value[3]
 
+	@property
 	def xyz(self) -> Vector3D:
-		return Vector3D(self.x(), self.y(), self.z())
+		return Vector3D(self.__value[0:3])
 
-	def value(self):
+	@x.setter
+	def x(self, value) -> None:
+		self.__value[0] = value
+
+	@y.setter
+	def y(self, value) -> None:
+		self.__value[1] = value
+
+	@z.setter
+	def z(self, value) -> None:
+		self.__value[2] = value
+
+	@w.setter
+	def w(self, value) -> None:
+		self.__value[3] = value
+
+	@property
+	def value(self) -> np.ndarray:
 		return self.__value
-
 

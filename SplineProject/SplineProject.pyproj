@@ -45,6 +45,9 @@
     <Compile Include="math3d.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utils.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Vector2D.py">
       <SubType>Code</SubType>
     </Compile>

@@ -4,4 +4,7 @@ from Vector4D import Vector4D
 from Matrix4x4 import Matrix4x4
 from Quaternion import Quaternion
 
+def Normalize(vector):
+	return vector / vector.norm()
+
 
