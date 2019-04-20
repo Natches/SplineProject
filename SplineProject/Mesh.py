@@ -21,26 +21,42 @@ class Mesh(object):
 	def __getItem__(self, key):
 		return self.__vertex[key]
 
-	def UpdateRotation(self, rotation=Quaternion):
+	@property
+	def rotation(self) -> Quaternion:
+		return self.__rotation
+
+	@property
+	def position(self) -> Vector3D:
+		return self.__position
+
+	@property
+	def scale(self) -> Vector3D:
+		return self.__scale
+
+	@rotation.setter
+	def rotation(self, rotation=Quaternion):
 		self.__rotation = rotation
 		self.__dirty = True
 
-	def UpdatePosition(self, position=Vector3D):
+	@position.setter
+	def position(self, position=Vector3D):
 		self.__position = position
 		self.__dirty = True
 
-	def UpdateScale(self, scale=Vector3D):
+	@scale.setter
+	def scale(self, scale=Vector3D):
 		self.__scale = scale
 		self.__dirty = True
 
-	def Transform(self):
+	@property
+	def ModelMatrix(self):
 		if(self.__dirty):
 			return self.__BuildModelMatrix()
 		else:
 			return self.__modelMx
 
 	def __BuildModelMatrix(self):
-		scale = Matrix4x4([[self.__scale.x(), 0, 0, 0],[0, self.__scale.y(), 0, 0],[0, 0, self.__scale.z(), 0],[0,0,0,1]])
+		scale = Matrix4x4([[self.__scale.x, 0, 0, 0],[0, self.__scale.y, 0, 0],[0, 0, self.__scale.z, 0],[0,0,0,1]])
 		rot = self.__rotation.matrix()
 		translate = Matrix4x4([[1, 0, 0, self.__position.x()],
 								[0, 1, 0, self.__position.y()],

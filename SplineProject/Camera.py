@@ -38,14 +38,32 @@ class Camera(object):
 		self.__BuildView();
 		self.__dirty = True
 
+	@property
 	def eye(self) -> Vector3D:
 		return self.__eye
 
+	@property
 	def at(self) -> Vector3D:
 		return self.__at
 
+	@property
 	def up(self) -> Vector3D:
 		return self.__up
+
+	@eye.setter
+	def eye(self, value=Vector3D) -> Vector3D:
+		self.__eye = value
+		self.__dirty = True
+
+	@at.setter
+	def at(self, value=Vector3D) -> Vector3D:
+		self.__at = value
+		self.__dirty = True
+
+	@up.setter
+	def up(self, value=Vector3D) -> Vector3D:
+		self.__up = value
+		self.__dirty = True
 
 	def __BuildView(self):
 		minusEye = -self.__eye
@@ -67,7 +85,7 @@ class Camera(object):
 										[0.0, 0.0, -1.0, 0.0]]);
 
 	def __BuildVP(self):
-		self.__VP = self.__perspective_Matrix * self.__view_Matrix
+		self.__VP = self.__perspective_Matrix * self.__BuildView()
 
 def From3DSpaceToScreen(point=Vector3D, width=int, height=int) -> Vector2D:
 	return Vector2D((point.x() / -point.z()) * width, (point.y() / -point.z()) * height)

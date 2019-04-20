@@ -11,7 +11,7 @@ import datetime as time
 def InitCamera() -> Camera:
 	cam = Camera()
 	cam.UpdatePerspective(60, 16/9, 1, 100)
-	cam.UpdateView(Vector3D([0, 0, -10]), Vector3D([0, 0.0, 0]), Vector3D([0.0, 1, 0.0]))
+	cam.UpdateView(Vector3D([0, 0, -10]), Vector3D([0, 0.0, -11]), Vector3D([0.0, 1, 0.0]))
 	return cam
 
 if __name__ == "__main__":
