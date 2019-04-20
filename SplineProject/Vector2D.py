@@ -7,40 +7,40 @@ class Vector2D(object):
 	__value = np.zeros(2)
 
 	def __init__(self, array=[0, 0]):
-		np.copyto(self.__value, array)
+		self.__value = np.array(array)
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __add__(self, other) -> Vector2D:
 		return self.__value + other
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __sub__(self, other) -> Vector2D:
 		return self.__value - other
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __mul__(self, other) -> Vector2D:
 		return self.__value * other
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __div__(self, other) -> Vector2D:
 		return self.__value / other
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __iadd__(self, other) -> Vector2D:
 		self.__value += other
 		return self.__value
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __isub__(self, other) -> Vector2D:
 		self.__value -= other
 		return self.__value
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __imul__(self, other) -> Vector2D:
 		self.__value *= other
 		return self.__value
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __idiv__(self, other) -> Vector2D:
 		self.__value /= other
 		return self.__value
@@ -55,7 +55,9 @@ class Vector2D(object):
 		return np.linalg.norm(self.__value)
 
 	def normalize(self) -> Vector2D:
-		self /= self.norm()	
+		norm = self.norm()
+		if(norm != 0):
+			self = self.__div__(norm)
 		return self
 
 	@property

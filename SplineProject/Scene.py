@@ -14,11 +14,13 @@ class Scene(object):
 		self.__entities.remove(mesh)
 		return self
 
-	def setCamera(self, camera=Camera):
-		self.__camera = camera
-
+	@property
 	def camera(self) -> Camera:
 		return self.__camera
+
+	@camera.setter
+	def camera(self, camera=Camera):
+		self.__camera = camera
 
 	def __getitem__(self, key) -> Mesh:
 		return self.__entities[key]

@@ -4,6 +4,7 @@ from Vector3D import Vector3D
 from Vector4D import Vector4D
 from Matrix4x4 import Matrix4x4
 import Utils
+import math3d
 
 class Quaternion(object):
 	__value = Vector4D()
@@ -44,10 +45,10 @@ class Quaternion(object):
 		return self
 
 	def rotate(self, other=Vector3D) -> Vector3D:
-		vecPart = self.__value.xyz()
-		scalar = self.__value.w()
+		vecPart = self.__value.xyz
+		scalar = self.__value.w
 		quatTemp = Quaternion.fromVec3(other.floatMul(scalar) + vecPart.cross(other), -(vecPart.dot(other)))
-		return (Quaternion.fromVec3(other.floatMul(scalar) + vecPart.cross(other), -(vecPart.dot(other))) * self.invert()).__value.xyz()
+		return (Quaternion.fromVec3(other.floatMul(scalar) + vecPart.cross(other), -(vecPart.dot(other))) * self.invert()).__value.xyz
 
 	def rotate4D(self, other=Vector4D) -> Vector4D:
 		return Vector4D(self.rotate(other.xyz()))
@@ -59,11 +60,11 @@ class Quaternion(object):
 		self.__value.normalize()
 		return self
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __add__(self, other='Quaternion') -> Quaternion:
 		return self.__value + other
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __sub__(self, other='Quaternion') -> Quaternion:
 		return self.__value - other
 
@@ -75,12 +76,12 @@ class Quaternion(object):
 		return Quaternion.fromVec3(vecPartA.floatMul(scalarB) + vecPartB.floatMul(scalarA) + vecPartA.cross(vecPartB),
 							scalarA * scalarB - vecPartA.dot(vecPartB))
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __iadd__(self, other='Quaternion') -> Quaternion:
 		self.__value += other
 		return self.__value
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __isub__(self, other='Quaternion') -> Quaternion:
 		self.__value -= other
 		return self.__value
@@ -91,20 +92,20 @@ class Quaternion(object):
 
 	def matrix(self) -> Matrix4x4:
 		self = self.normalize()
-		vecPart = self.__value.xyz()
-		scalar = self.__value.w()
-		vecA = Vector4D.fromVector3(vecPart, vecPart.x())
-		vecB = Vector4D.fromVector3(vecPart, vecPart.y())
-		vecC = Vector4D(scalar, scalar, scalar, vecPart.z())
+		vecPart = self.__value.xyz
+		scalar = self.__value.w
+		vecA = Vector4D.fromVector3(vecPart, vecPart.x)
+		vecB = Vector4D.fromVector3(vecPart, vecPart.y)
+		vecC = Vector4D([scalar, scalar, scalar, vecPart.z])
 		
 		vecB = vecA * vecB
 		vecC = vecA * vecC
 		
-		vYZ = (vecPart.y() *  vecPart.z())
+		vYZ = (vecPart.y *  vecPart.z)
 
-		return Matrix4x4([[0.5 - (vecB.y() + vecB.z()), (vecB.w() - vecC.z()), (vecC.w() + vecC.y()), 0],
-					[(vecB.w() + vecC.z()), 0.5 - (vecB.x() + vecB.z()), (vYZ - vecC.x()), 0],
-					[(vecC.w() - vecC.y()), (vYZ + vecC.x()), 0.5 - (vecB.x() + vecB.y()), 0],
+		return Matrix4x4([[0.5 - (vecB.y + vecB.z), (vecB.w - vecC.z), (vecC.w + vecC.y), 0],
+					[(vecB.w + vecC.z), 0.5 - (vecB.x + vecB.z), (vYZ - vecC.x), 0],
+					[(vecC.w - vecC.y), (vYZ + vecC.x), 0.5 - (vecB.x + vecB.y), 0],
 					[0, 0, 0, 1]])
 	@property
 	def value(self):
@@ -123,5 +124,5 @@ def Inverse(quat=Quaternion):
 		return result
 
 def Normalize(quat=Quaternion):
-	return Quaternion(quat.value / quat.norm())
+	return Quaternion(math3d.Normalize(quat._Quaternion__value))
 

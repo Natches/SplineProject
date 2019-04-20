@@ -18,11 +18,12 @@ class Matrix4x4(object):
 		self.__value = np.inv(self.__value)
 		return self
 
-	@Utils.operatorDecorator
 	def __mul__(self, other) -> Matrix4x4:
-		return Matrix4x4(np.matmul(self.__value, other))
+		if(isinstance(other, Vector4D) == False):
+			return Matrix4x4(np.matmul(self.__value, other.value))
+		return Vector4D(np.matmul(self.__value, other.value))
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __imul__(self, other) -> Matrix4x4:
 		self.__value = np.matmul(self.__value, other)
 		return self

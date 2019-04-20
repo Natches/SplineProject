@@ -18,7 +18,7 @@ class Mesh(object):
 		self.__vertex = vertex
 		self.__indices = indices
 
-	def __getItem__(self, key):
+	def __getitem__(self, key):
 		return self.__vertex[key]
 
 	@property
@@ -49,7 +49,7 @@ class Mesh(object):
 		self.__dirty = True
 
 	@property
-	def ModelMatrix(self):
+	def model_matrix(self):
 		if(self.__dirty):
 			return self.__BuildModelMatrix()
 		else:
@@ -58,24 +58,24 @@ class Mesh(object):
 	def __BuildModelMatrix(self):
 		scale = Matrix4x4([[self.__scale.x, 0, 0, 0],[0, self.__scale.y, 0, 0],[0, 0, self.__scale.z, 0],[0,0,0,1]])
 		rot = self.__rotation.matrix()
-		translate = Matrix4x4([[1, 0, 0, self.__position.x()],
-								[0, 1, 0, self.__position.y()],
-								[0, 0, 1, self.__position.z()],
+		translate = Matrix4x4([[1, 0, 0, self.__position.x],
+								[0, 1, 0, self.__position.y],
+								[0, 0, 1, self.__position.z],
 								[0, 0, 0, 1]])
 		self.__modelMx = translate * rot * scale 
 		return self.__modelMx
 
-	def Draw(self, pen=Turtle, camera=Camera):
-		mvp = camera.ViewPerspective() * self.Transform()
+	def draw(self, pen=Turtle, camera=Camera):
+		mvp = camera.view_perspective * self.model_matrix
 		height = pen.getscreen().canvheight
 		width = pen.getscreen().canvwidth
 		pen.pu()
-		point = cam.From3DSpaceToScreen((mvp.mulVec4(self.__vertex[self.__indices[0]])).xyz(), width, height)
-		pen.setpos(point.x(), point.y())
+		point = cam.From3DSpaceToScreen((mvp * self.__vertex[self.__indices[0]]).xyz, width, height)
+		pen.setpos(point.x, point.y)
 		pen.pd()
 		for idx in self.__indices:
-			position = (mvp.mulVec4(self.__vertex[idx])).xyz()
-			if((position - camera.eye()).normalize().dot(camera.at()) > 0):
+			position = (mvp * self.__vertex[idx]).xyz
+			if((position - camera.eye).normalize().dot(camera.at) > 0):
 				point = cam.From3DSpaceToScreen(position, width, height)
-				pen.setpos(point.x(), point.y())
+				pen.setpos(point.x, point.y)
 		pen.pu()

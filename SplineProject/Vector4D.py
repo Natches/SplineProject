@@ -8,44 +8,44 @@ class Vector4D(object):
 	__value = np.zeros(4)
 
 	def __init__(self, array=[0, 0, 0, 0]):
-		np.copyto(self.__value, array)
+		self.__value = np.array(array)
 	
 	@classmethod
 	def fromVector3(cls, vec3=Vector3D, w=1.0):
-		return cls(vec3.x(), vec3.y(), vec3.z(), w)
+		return cls([vec3.x, vec3.y, vec3.z, w])
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __add__(self, other) -> Vector4D:
 		return Vector4D(self.__value + other)
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __sub__(self, other) -> Vector4D:
 		return Vector4D(self.__value - other)
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __mul__(self, other) -> Vector4D:
 		return Vector4D(self.__value * other)
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __div__(self, other) -> Vector4D:
 		return Vector4D(self.__value / other)
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __iadd__(self, other) -> Vector4D:
 		self.__value += other
 		return self
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __isub__(self, other) -> Vector4D:
 		self.__value -= other
 		return self
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __imul__(self, other) -> Vector4D:
 		self.__value *= other
 		return self
 
-	@Utils.operatorDecorator
+	@Utils.OperatorDecorator
 	def __idiv__(self, other) -> Vector4D:
 		self.__value /= other
 		return self
@@ -60,7 +60,9 @@ class Vector4D(object):
 		return np.linalg.norm(self.__value)
 
 	def normalize(self) -> Vector4D:
-		self.__value /= self.norm()
+		norm = self.norm()
+		if(norm != 0):
+			self = self.__div__(norm)
 		return self
 
 	@property

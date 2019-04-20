@@ -11,17 +11,19 @@ class Renderer(object):
 		self.__pen.hideturtle()
 		self.__pen.pu()
 		self.__pen.screen.tracer(0, 0)
+		self.__pen.resizemode("noresize")
 
-	def Render(self, scene=Scene):
+	def render(self, scene=Scene):
 		for entity in scene:
-			entity.Draw(self.__pen, scene.camera())
+			entity.draw(self.__pen, scene.camera)
 
-	def Clear(self):
+	def clear(self):
 		self.__pen.clear()
 
-	def SwapBuffer(self):
+	def swap_buffer(self):
 		self.__pen.screen.update()
 
+	@property
 	def pen(self) -> Turtle:
 		return self.__pen
 
