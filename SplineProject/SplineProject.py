@@ -11,7 +11,7 @@ import datetime as time
 def InitCamera() -> Camera:
 	cam = Camera()
 	cam.update_perspective(60, 16/9, 1, 100)
-	cam.update_view(Vector3D([0, 0, -10]), Vector3D([0, 0.0, -11]), Vector3D([0.0, 1, 0.0]))
+	cam.update_view(Vector3D([0, 5, -10]), Vector3D([0, 0.0, 0]), Vector3D([0.0, 1, 0.0]))
 	return cam
 
 if __name__ == "__main__":
@@ -42,9 +42,6 @@ if __name__ == "__main__":
 	def MoveCameraForward(event):
 		dir = (camera.at - camera.eye).normalize() * deltatime * speed
 		camera.update_view(camera.eye + dir, camera.at + dir, camera.up)
-		print(dir._Vector3D__value.__str__())
-		print(camera.eye.value.__str__())
-		print(camera.at.value.__str__())
 
 	def MoveCameraBackward(event):
 		dir = (camera.at - camera.eye).normalize() * deltatime * speed
@@ -52,12 +49,12 @@ if __name__ == "__main__":
 
 	def MoveCameraRight(event):
 		dir = (camera.at - camera.eye)
-		right = math3d.Cross(dir.normalize() * camera.up) * deltatime * speed
+		right = math3d.Cross(dir.normalize(), camera.up) * deltatime * speed
 		camera.update_view(camera.eye + right, camera.at + right, camera.up)
 
 	def MoveCameraLeft(event):
 		dir = (camera.at - camera.eye)
-		right = math3d.Cross(dir.normalize() * camera.up) * deltatime * speed
+		right = math3d.Cross(dir.normalize(), camera.up) * deltatime * speed
 		camera.update_view(camera.eye - right, camera.at - right, camera.up)
 
 	renderer.pen.screen.getcanvas().bind("w", MoveCameraForward)
@@ -71,9 +68,6 @@ if __name__ == "__main__":
 		timeNow = time.datetime.now()
 		renderer.clear()
 		renderer.render(scene)
-		renderer.pen.pd()
-		renderer.pen.setpos(0, 0)
-		renderer.pen.setpos(0, 10)
 		renderer.swap_buffer()
 		deltatime = (time.datetime.now() - timeNow).microseconds / 1000000
 		renderer.pen.screen.ontimer(render, 16)

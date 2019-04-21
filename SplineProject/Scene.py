@@ -7,7 +7,7 @@ class Scene(object):
 	__entities = []
 
 	def __iadd__(self, mesh=Mesh):
-		self.__entities.append(copy.deepcopy(mesh))
+		self.__entities.append(mesh)
 		return self
 
 	def __isub__(self, mesh=Mesh):

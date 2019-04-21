@@ -70,12 +70,12 @@ class Camera(object):
 
 	def __BuildView(self) -> Matrix4x4:
 		minusEye = -self.eye
-		zc = (self.__at + minusEye).normalize()
+		zc = (self.eye - self.__at).normalize()
 		xc = math3d.Cross(self.up, zc).normalize()
 		yc = math3d.Cross(zc, xc);
 		self.__view_Matrix = Matrix4x4([[xc.x, xc.y, xc.z, minusEye.dot(xc)],
 						 [yc.x, yc.y, yc.z, minusEye.dot(yc)],
-						 [zc.x, zc.z, zc.z, minusEye.dot(zc)],
+						 [zc.x, zc.y, zc.z, minusEye.dot(zc)],
 						 [0,0,0,1]])
 		return self.__view_Matrix
 
@@ -93,7 +93,8 @@ class Camera(object):
 		self.__VP = self.__BuildPerspective() * self.__BuildView()
 
 def From3DSpaceToScreen(point=Vector3D, width=int, height=int) -> Vector2D:
-	return Vector2D([math.floor((point.x / -point.z) * width), math.floor((point.y / -point.z) * height)])
+	screenCoordinate = Vector2D([(float)((point.x / -point.z) * width), (float)((point.y / -point.z) * height)])
+	return screenCoordinate
 		
 
 
