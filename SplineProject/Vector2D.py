@@ -11,39 +11,39 @@ class Vector2D(object):
 
 	@Utils.OperatorDecorator
 	def __add__(self, other) -> Vector2D:
-		return self.__value + other
+		return Vector2D(self.__value + other)
 
 	@Utils.OperatorDecorator
 	def __sub__(self, other) -> Vector2D:
-		return self.__value - other
+		return  Vector2D(self.__value - other)
 
 	@Utils.OperatorDecorator
 	def __mul__(self, other) -> Vector2D:
-		return self.__value * other
+		return  Vector2D(self.__value * other)
 
 	@Utils.OperatorDecorator
 	def __div__(self, other) -> Vector2D:
-		return self.__value / other
+		return Vector2D(self.__value / other)
 
 	@Utils.OperatorDecorator
 	def __iadd__(self, other) -> Vector2D:
 		self.__value += other
-		return self.__value
+		return self
 
 	@Utils.OperatorDecorator
 	def __isub__(self, other) -> Vector2D:
 		self.__value -= other
-		return self.__value
+		return self
 
 	@Utils.OperatorDecorator
 	def __imul__(self, other) -> Vector2D:
 		self.__value *= other
-		return self.__value
+		return self
 
 	@Utils.OperatorDecorator
 	def __idiv__(self, other) -> Vector2D:
 		self.__value /= other
-		return self.__value
+		return self
 
 	def __neg__(self, other='Vector2D') -> Vector2D:
 		return -other.__value

@@ -69,22 +69,25 @@ class Mesh(object):
 
 	def draw(self, pen=Turtle, camera=Camera):
 		mvp = camera.view_perspective * self.model_matrix
-		height = pen.getscreen().canvheight * 0.5
-		width = pen.getscreen().canvwidth * 0.5
+		height = pen.getscreen().canvheight - 1
+		width = pen.getscreen().canvwidth - 1
 		transformedPoints = copy.deepcopy(self.__vertex)
 		for idx in range(0, self.__vertex.__len__()):
-			transformedPoints[idx] = cam.From3DSpaceToScreen((mvp * transformedPoints[idx]).xyz, width, height)
+			point = (mvp * transformedPoints[idx])
+			point = point.xyz.__div__(point.w)
+			transformedPoints[idx] = cam.From3DSpaceToScreen(point, width, height)
 
 		lastPoint = transformedPoints[self.__indices[0]]
 		pen.setpos(lastPoint.x, lastPoint.y)
 		for idx in self.__indices:
-			if((math.fabs(transformedPoints[idx].x) < width and math.fabs(transformedPoints[idx].y) < height) or 
-				(math.fabs(lastPoint.x) < width  and math.fabs(lastPoint.y) < height)):
-				position = Utils.FindIntersection(transformedPoints[idx], lastPoint, width, height)
-				pen.setpos(position[0].x, position[0].y)
+			position = Utils.FindIntersection(lastPoint, transformedPoints[idx], width, height)
+			if(position.__len__() > 0):
+				pen.setpos(lastPoint.x, lastPoint.y)
 				pen.pd()
 				pen.setpos(position[1].x, position[1].y)
 				pen.pu()
-			lastPoint = transformedPoints[idx]
+				lastPoint = position[1]
+			else:
+				lastPoint = transformedPoints[idx]
 		pen.pu()
 

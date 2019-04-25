@@ -74,11 +74,11 @@ class Vector3D(object):
 
 	@property
 	def xy(self) -> Vector2D:
-		return self.__value[0:2]
+		return Vector2D(self.__value[0:2])
 
 	@property
 	def yz(self) -> Vector2D:
-		return self.__value[1:3]
+		return Vector2D(self.__value[1:3])
 
 	@x.setter
 	def x(self, value) -> None:

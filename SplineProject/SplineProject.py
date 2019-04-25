@@ -28,50 +28,15 @@ if __name__ == "__main__":
 	scene.camera = camera
 	scene += mesh
 	renderer = Renderer(640, 360, 0)
-	deltatime = 0.001
-	speed = 500	
 
-	def MoveCameraUp(event):
-		up = Vector3D([0,1,0]) * deltatime * speed
-		camera.update_view((camera.eye + up), camera.at + up, camera.up)
-
-	def MoveCameraDown(event):
-		up = Vector3D([0,1,0]) * deltatime * speed
-		camera.update_view((camera.eye - up), camera.at - up, camera.up)
-
-	def MoveCameraForward(event):
-		dir = (camera.at - camera.eye).normalize() * deltatime * speed
-		camera.update_view(camera.eye + dir, camera.at + dir, camera.up)
-
-	def MoveCameraBackward(event):
-		dir = (camera.at - camera.eye).normalize() * deltatime * speed
-		camera.update_view(camera.eye - dir, camera.at - dir, camera.up)
-
-	def MoveCameraRight(event):
-		dir = (camera.at - camera.eye)
-		right = math3d.Cross(dir.normalize(), camera.up) * deltatime * speed
-		camera.update_view(camera.eye + right, camera.at + right, camera.up)
-
-	def MoveCameraLeft(event):
-		dir = (camera.at - camera.eye)
-		right = math3d.Cross(dir.normalize(), camera.up) * deltatime * speed
-		camera.update_view(camera.eye - right, camera.at - right, camera.up)
-
-	renderer.pen.screen.getcanvas().bind("w", MoveCameraForward)
-	renderer.pen.screen.getcanvas().bind("s", MoveCameraBackward)
-	renderer.pen.screen.getcanvas().bind("q", MoveCameraUp)
-	renderer.pen.screen.getcanvas().bind("e", MoveCameraDown)
-	renderer.pen.screen.getcanvas().bind("a", MoveCameraLeft)
-	renderer.pen.screen.getcanvas().bind("d", MoveCameraRight)
-
-	def render():
+	def renderScene():
 		timeNow = time.datetime.now()
 		renderer.clear()
 		renderer.render(scene)
 		renderer.swap_buffer()
 		deltatime = (time.datetime.now() - timeNow).microseconds / 1000000
-		renderer.pen.screen.ontimer(render, 16)
-	renderer.pen.screen.ontimer(render, 16)
+		renderer.pen.screen.ontimer(render, 0)
+	renderer.pen.screen.ontimer(render, 0)
 	renderer.pen.screen.listen()
 
 renderer.pen.screen.mainloop()

@@ -41,6 +41,9 @@
     <Compile Include="Scene.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Spline.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SplineProject.py" />
     <Compile Include="math3d.py">
       <SubType>Code</SubType>

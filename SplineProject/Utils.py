@@ -21,6 +21,12 @@ def OperatorDecorator(func):
 		return inner
 
 def FindIntersection(vec1='math3d.Vector2D', vec2='math3d.Vector2D', width=int, height=int) -> [math3d.Vector2D]:
+	if((vec1.x > width and vec2.x > width) or
+		(vec1.y > height and vec2.y > height) or
+		(vec1.y < 0.0 and vec2.y < 0.0) or
+		(vec1.x < 0.0 and vec2.x < 0.0)):
+		return []
+
 	if(vec1 == vec2):
 		return [vec1, vec2]
 	vecBis1 = copy.deepcopy(vec1)
@@ -42,22 +48,22 @@ def FindIntersection(vec1='math3d.Vector2D', vec2='math3d.Vector2D', width=int, 
 				elif(Inside(S, edge, width, height)):
 					ComputeIntersection(S, E, edge, width, height, output)
 				S = E
-	if(output[0] == output[1] and output.__len__() > 2 and output[0] != output[2]):
-		return [output[0], output[2]]
-	elif(output.__len__() > 2 and output[0] == output[2] and output[1] != output[2]):
-		return [output[1], output[2]]
-	else:
-		return [output[0], output[1]]
+	if(output.__len__() > 2):
+		if(output[0] == output[1] and output[0] != output[2]):
+			return [output[0], output[2]]
+		elif(output[0] == output[2] and output[1] != output[2]):
+			return [output[1], output[2]]
+	return [output[0], output[1]]
 
 def ComputeIntersection(vec1='math3d.Vector2D', vec2='math3d.Vector2D', edge=Edge, width=int, height=int, output=[]):
 	if (edge == Edge.BOTTOM):
-		ComputeHorizontalIntersection(vec1, vec2, math3d.Vector2D([0, -height]))
+		ComputeHorizontalIntersection(vec1, vec2, math3d.Vector2D([width, height]))
 	elif(edge == Edge.TOP):
-		ComputeHorizontalIntersection(vec1, vec2, math3d.Vector2D([0, height]))
+		ComputeHorizontalIntersection(vec1, vec2, math3d.Vector2D([width, 0]))
 	elif (edge == Edge.LEFT):
-		ComputeVerticalIntersection(vec1, vec2,  math3d.Vector2D([-width, 0]))
+		ComputeVerticalIntersection(vec1, vec2,  math3d.Vector2D([0, height]))
 	elif(edge == Edge.RIGHT):
-		ComputeVerticalIntersection(vec1, vec2, math3d.Vector2D([width, 0]))
+		ComputeVerticalIntersection(vec1, vec2, math3d.Vector2D([width, height]))
 
 	output.append(vec2)
 
@@ -80,10 +86,10 @@ def ComputeVerticalIntersection(vec1='math3d.Vector2D', vec2='math3d.Vector2D', 
 
 def Inside(vec='math3d.Vector2D', edge=Edge, width=int, height=int):
 	if(edge == Edge.BOTTOM):
-		return vec.y > -height
+		return vec.y <= height
 	elif(edge == Edge.TOP):
-		return vec.y < height
+		return vec.y >= 0.0
 	elif(edge == Edge.LEFT):
-		return vec.x > -width
+		return vec.x >= 0.0
 	elif(edge == Edge.RIGHT):
-		return vec.x < width
+		return vec.x <= width

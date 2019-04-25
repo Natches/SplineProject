@@ -93,7 +93,9 @@ class Camera(object):
 		self.__VP = self.__BuildPerspective() * self.__BuildView()
 
 def From3DSpaceToScreen(point=Vector3D, width=int, height=int) -> Vector2D:
-	screenCoordinate = Vector2D([(float)((point.x / -point.z) * width), (float)((point.y / -point.z) * height)])
+	x = math.floor((point.x / -point.z) * width + width * 0.5)
+	y = math.floor((point.y / -point.z) * height + height * 0.5)
+	screenCoordinate = Vector2D([x, y])
 	return screenCoordinate
 		
 
