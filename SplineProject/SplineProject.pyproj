@@ -26,6 +26,7 @@
     <Compile Include="Camera.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Matrix4x3.py" />
     <Compile Include="Matrix4x4.py">
       <SubType>Code</SubType>
     </Compile>

@@ -1,6 +1,8 @@
 from __future__ import annotations
 import numpy as np
 from Vector3D import Vector3D
+from Matrix4x3 import Matrix4x3
+import math3d
 import Utils
 
 class Vector4D(object):
@@ -24,6 +26,10 @@ class Vector4D(object):
 
 	@Utils.OperatorDecorator
 	def __mul__(self, other) -> Vector4D:
+		if(isinstance(other, Matrix4x3)):
+			return Vector3D(np.matmul(self.__value, other.value))
+		elif(isinstance(other, math3d.Matrix4x4)):
+			return Vector4D(np.matmul(self.__value, other.value))
 		return Vector4D(self.__value * other)
 
 	@Utils.OperatorDecorator

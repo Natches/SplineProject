@@ -1,6 +1,7 @@
 from __future__ import annotations
 import numpy as np
 from Vector4D import Vector4D
+from Matrix4x3 import Matrix4x3
 import Utils
 
 class Matrix4x4(object):
@@ -19,8 +20,10 @@ class Matrix4x4(object):
 		return self
 
 	def __mul__(self, other) -> Matrix4x4:
-		if(isinstance(other, Vector4D) == False):
+		if(isinstance(other, Vector4D) == False and isinstance(other, Matrix4x3) == False):
 			return Matrix4x4(np.matmul(self.__value, other.value))
+		elif(isinstance(other, Matrix4x3) == True):
+			return Matrix4x3(np.matmul(self.__value, other.value))
 		return Vector4D(np.matmul(self.__value, other.value))
 
 	@Utils.OperatorDecorator
