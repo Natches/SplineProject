@@ -13,13 +13,13 @@ class Mesh(object):
 	__scale = Vector3D([1, 1, 1])
 
 	__modelMx = Matrix4x4()
-	__vertex = [Vector4D]
-	__indices = [int]
+	__vertex = []
+	__indices = []
 
-	__transformed_points = [Vector2D]
+	__transformed_points = []
 
 
-	def __init__(self, vertex=[Vector4D], indices=[int]):
+	def __init__(self, vertex=[], indices=[]):
 		self.__vertex = vertex
 		self.__transformed_points = [Vector2D()] * vertex.__len__()
 		self.__indices = indices
@@ -78,25 +78,28 @@ class Mesh(object):
 		height = pen.getscreen().canvheight - 1
 		width = pen.getscreen().canvwidth - 1
 		if(dirty):
+			self.__transformed_points = [Vector2D()] * self.__vertex.__len__()
 			self.__transformed_points[:] = [self.__transform_point(vertex, mvp, width, height) for vertex in self.__vertex]
 
 		lastPoint = self.__transformed_points[self.__indices[0]]
 		pen.setpos(lastPoint.x, lastPoint.y)
 		for idx in self.__indices:
+			transformedPoint = self.__transformed_points[idx]
 			if(dirty):
-				position = Utils.FindIntersection(lastPoint, self.__transformed_points[idx], width, height)
+				position = Utils.FindIntersection(lastPoint, transformedPoint, width, height)
 				if(position.__len__() > 0):
+					position = position[1]
 					pen.pd()
-					pen.setpos(position[1].x, position[1].y)
+					pen.setpos(position.x, position.y)
 					pen.pu()
-					lastPoint = position[1]
+					lastPoint = position
 				else:
-					lastPoint = self.__transformed_points[idx]
+					lastPoint = transformedPoint
 			else:
 				pen.pd()
-				pen.setpos(self.__transformed_points[idx].x, self.__transformed_points[idx].y)
+				pen.setpos(transformedPoint.x, transformedPoint.y)
 				pen.pu()
-				lastPoint = self.__transformed_points[idx]
+				lastPoint = transformedPoint
 			pen.setpos(lastPoint.x, lastPoint.y)
 		pen.pu()
 

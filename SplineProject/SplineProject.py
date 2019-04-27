@@ -16,28 +16,18 @@ def InitCamera() -> Camera:
 	return cam
 
 if __name__ == "__main__":
-	curve = sp.HermitienneCurve()
+	renderer = Renderer(1280, 720, 0)
+
+	scene = Scene()
+	camera = InitCamera()
+	curve = sp.HermitienneCurve(renderer.pen.screen.getcanvas(), camera)
 	curve.p1 = Vector3D([-1,0,0])
 	curve.p2 = Vector3D([1,0,0])
 	curve.r1 = Vector3D([-1,10,0])
 	curve.r2 = Vector3D([0,10,0])
-	curve.precision = 0.1
-	vertex = []
-	indices = []
-	i = 0
-	t = 0
-	while t < 1:
-		vertex.append(curve.compute(t))
-		indices.append(i)
-		i += 1
-		t += curve._Curve__precision
-
-	mesh = Mesh(vertex, indices)
-	scene = Scene()
-	camera = InitCamera()
+	curve.precision = 100
 	scene.camera = camera
-	scene += mesh
-	renderer = Renderer(1280, 720, 0)
+	scene += curve
 
 	def renderScene():
 		timeNow = time.datetime.now()
@@ -45,10 +35,9 @@ if __name__ == "__main__":
 		renderer.render(scene)
 		renderer.swap_buffer()
 		deltatime = (time.datetime.now() - timeNow).microseconds / 1000
-		print(((int)(1000 / deltatime)).__str__())
+		#print(((int)(1000 / deltatime)).__str__())
 		renderer.pen.screen.ontimer(renderScene, 0)
 	renderer.pen.screen.ontimer(renderScene, 0)
-	renderer.pen.screen.listen()
 
 renderer.pen.screen.mainloop()
 	

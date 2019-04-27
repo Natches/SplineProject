@@ -16,7 +16,7 @@ class Matrix4x4(object):
 		return self
 
 	def inverse(self) -> Matrix4x4:
-		self.__value = np.inv(self.__value)
+		self.__value = np.linalg.inv(self.__value)
 		return self
 
 	def __mul__(self, other) -> Matrix4x4:
@@ -43,4 +43,4 @@ def Transpose(matrice=Matrix4x4) -> Matrix4x4:
 	return Matrix4x4(np.transpose(matrice.value))
 
 def Inverse(matrice=Matrix4x4) -> Matrix4x4:
-	return Matrix4x4(np.inv(matrice.value))
+	return Matrix4x4(np.linalg.inv(matrice.value))
