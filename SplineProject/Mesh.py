@@ -15,6 +15,8 @@ class Mesh(object):
 	__modelMx = Matrix4x4()
 	__vertex = [Vector4D]
 	__indices = [int]
+
+	__futures = []
 	def __init__(self, vertex=[Vector4D], indices=[int]):
 		self.__vertex = vertex
 		self.__indices = indices
@@ -53,9 +55,9 @@ class Mesh(object):
 	@property
 	def model_matrix(self):
 		if(self.__dirty):
-			return self.__BuildModelMatrix()
-		else:
-			return self.__modelMx
+			self.__BuildModelMatrix()
+			self.__dirty = False
+		return self.__modelMx
 
 	def __BuildModelMatrix(self):
 		scale = Matrix4x4([[self.__scale.x, 0, 0, 0],[0, self.__scale.y, 0, 0],[0, 0, self.__scale.z, 0],[0,0,0,1]])
@@ -64,7 +66,7 @@ class Mesh(object):
 								[0, 1, 0, self.__position.y],
 								[0, 0, 1, self.__position.z],
 								[0, 0, 0, 1]])
-		self.__modelMx = translate * rot * scale 
+		self.__modelMx = translate * rot * scale
 		return self.__modelMx
 
 	def draw(self, pen=Turtle, camera=Camera):
@@ -72,22 +74,25 @@ class Mesh(object):
 		height = pen.getscreen().canvheight - 1
 		width = pen.getscreen().canvwidth - 1
 		transformedPoints = copy.deepcopy(self.__vertex)
-		for idx in range(0, self.__vertex.__len__()):
-			point = (mvp * transformedPoints[idx])
-			point = point.xyz.__div__(point.w)
-			transformedPoints[idx] = cam.From3DSpaceToScreen(point, width, height)
+		transformedPoints[:] = [self.__transform_point(vertex, mvp, width, height) for vertex in transformedPoints]
 
 		lastPoint = transformedPoints[self.__indices[0]]
 		pen.setpos(lastPoint.x, lastPoint.y)
 		for idx in self.__indices:
-			position = Utils.FindIntersection(lastPoint, transformedPoints[idx], width, height)
+			position =Utils.FindIntersection(lastPoint, transformedPoints[idx], width, height)
 			if(position.__len__() > 0):
-				pen.setpos(lastPoint.x, lastPoint.y)
 				pen.pd()
 				pen.setpos(position[1].x, position[1].y)
 				pen.pu()
 				lastPoint = position[1]
 			else:
 				lastPoint = transformedPoints[idx]
+			pen.setpos(lastPoint.x, lastPoint.y)
 		pen.pu()
+
+	def __transform_point(self, vertex=Vector4D, mvp=Matrix4x4, width=int, height=int) -> Vector2D:
+		vertex = (mvp * vertex)
+		vertex = vertex.xyz.__div__(vertex.w)
+		vertex = cam.From3DSpaceToScreen(vertex, width, height)
+		return vertex
 

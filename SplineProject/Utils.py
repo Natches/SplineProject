@@ -29,9 +29,7 @@ def FindIntersection(vec1='math3d.Vector2D', vec2='math3d.Vector2D', width=int, 
 
 	if(vec1 == vec2):
 		return [vec1, vec2]
-	vecBis1 = copy.deepcopy(vec1)
-	vecBis2 =  copy.deepcopy(vec2)
-	output = [vecBis1, vecBis2]
+	output = [vec1, vec2]
 	input = []
 	for edge in Edge:
 		input.clear()

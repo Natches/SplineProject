@@ -17,6 +17,14 @@ class Curve(object):
 	def compute(self, value):
 		assert(False)
 
+	@property
+	def precision(self):
+		return self.__precision
+
+	@precision.setter
+	def precision(self, value):
+		self.__precision = value
+
 class HermitienneCurve(Curve):
 	__dirty = True
 	__tan_line = [Vector3D(), Vector3D()]
@@ -28,15 +36,16 @@ class HermitienneCurve(Curve):
 
 	def __build_geometric_matrix(self):
 		if(self.__dirty):
-			self._Curve__geometric_matrix = Matrix4x3([self._Curve__control_points[0].value, self._Curve__control_points[1].value,
+			self._Curve__geometric_matrix = self._Curve__constant_matrix * Matrix4x3([self._Curve__control_points[0].value, self._Curve__control_points[1].value,
 				 self.__tan_line[0].value,  self.__tan_line[1].value])
+			self.__dirty = False
 		return self._Curve__geometric_matrix
 
 	def compute(self, value) -> Vector4D:
 		assert(value <= 1)
 		self.__build_geometric_matrix()
 		value_vec = Vector4D([value**3, value**2, value, 1])
-		return Vector4D.fromVector3(value_vec * self._Curve__constant_matrix * self._Curve__geometric_matrix, 1)
+		return Vector4D.fromVector3(value_vec * self._Curve__geometric_matrix, 1)
 
 	@property
 	def p1(self) -> Vector3D:

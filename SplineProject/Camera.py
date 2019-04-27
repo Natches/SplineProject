@@ -24,6 +24,7 @@ class Camera(object):
 	def view_perspective(self) -> Matrix4x4:
 		if(self.__dirty):
 			self.__BuildVP()
+			self.__dirty = False
 		return self.__VP
 
 	def update_perspective(self, fov = 0.0, aspect = 0.0, nearZ = 0.0, farZ = 0.0):

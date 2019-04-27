@@ -21,6 +21,7 @@ if __name__ == "__main__":
 	curve.p2 = Vector3D([1,0,0])
 	curve.r1 = Vector3D([1,-10,0])
 	curve.r2 = Vector3D([-1,10,0])
+	curve.precision = 0.01
 	vertex = []
 	indices = []
 	i = 0
@@ -36,14 +37,15 @@ if __name__ == "__main__":
 	camera = InitCamera()
 	scene.camera = camera
 	scene += mesh
-	renderer = Renderer(640, 360, 0)
+	renderer = Renderer(1280, 720, 0)
 
 	def renderScene():
 		timeNow = time.datetime.now()
 		renderer.clear()
 		renderer.render(scene)
 		renderer.swap_buffer()
-		deltatime = (time.datetime.now() - timeNow).microseconds / 1000000
+		deltatime = (time.datetime.now() - timeNow).microseconds / 1000
+		print(deltatime.__str__())
 		renderer.pen.screen.ontimer(renderScene, 0)
 	renderer.pen.screen.ontimer(renderScene, 0)
 	renderer.pen.screen.listen()
