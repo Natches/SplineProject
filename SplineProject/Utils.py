@@ -21,13 +21,15 @@ def OperatorDecorator(func):
 		return inner
 
 def FindIntersection(vec1='math3d.Vector2D', vec2='math3d.Vector2D', width=int, height=int) -> [math3d.Vector2D]:
+	vec1Outside = vec1.x > width or vec1.y > height or vec1.y < 0.0 or vec1.x < 0.0
+	vec2Outside = vec2.x > width or vec2.y > height or vec2.y < 0.0 or vec2.x < 0.0
 	if((vec1.x > width and vec2.x > width) or
 		(vec1.y > height and vec2.y > height) or
 		(vec1.y < 0.0 and vec2.y < 0.0) or
 		(vec1.x < 0.0 and vec2.x < 0.0)):
 		return []
 
-	if(vec1 == vec2):
+	if(vec1 == vec2 or (not vec1Outside and not vec2Outside)):
 		return [vec1, vec2]
 	output = [vec1, vec2]
 	input = []

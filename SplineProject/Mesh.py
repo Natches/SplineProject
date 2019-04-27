@@ -16,9 +16,12 @@ class Mesh(object):
 	__vertex = [Vector4D]
 	__indices = [int]
 
-	__futures = []
+	__transformed_points = [Vector2D]
+
+
 	def __init__(self, vertex=[Vector4D], indices=[int]):
 		self.__vertex = vertex
+		self.__transformed_points = [Vector2D()] * vertex.__len__()
 		self.__indices = indices
 		
 
@@ -70,23 +73,30 @@ class Mesh(object):
 		return self.__modelMx
 
 	def draw(self, pen=Turtle, camera=Camera):
+		dirty = self.__dirty
 		mvp = camera.view_perspective * self.model_matrix
 		height = pen.getscreen().canvheight - 1
 		width = pen.getscreen().canvwidth - 1
-		transformedPoints = copy.deepcopy(self.__vertex)
-		transformedPoints[:] = [self.__transform_point(vertex, mvp, width, height) for vertex in transformedPoints]
+		if(dirty):
+			self.__transformed_points[:] = [self.__transform_point(vertex, mvp, width, height) for vertex in self.__vertex]
 
-		lastPoint = transformedPoints[self.__indices[0]]
+		lastPoint = self.__transformed_points[self.__indices[0]]
 		pen.setpos(lastPoint.x, lastPoint.y)
 		for idx in self.__indices:
-			position =Utils.FindIntersection(lastPoint, transformedPoints[idx], width, height)
-			if(position.__len__() > 0):
-				pen.pd()
-				pen.setpos(position[1].x, position[1].y)
-				pen.pu()
-				lastPoint = position[1]
+			if(dirty):
+				position = Utils.FindIntersection(lastPoint, self.__transformed_points[idx], width, height)
+				if(position.__len__() > 0):
+					pen.pd()
+					pen.setpos(position[1].x, position[1].y)
+					pen.pu()
+					lastPoint = position[1]
+				else:
+					lastPoint = self.__transformed_points[idx]
 			else:
-				lastPoint = transformedPoints[idx]
+				pen.pd()
+				pen.setpos(self.__transformed_points[idx].x, self.__transformed_points[idx].y)
+				pen.pu()
+				lastPoint = self.__transformed_points[idx]
 			pen.setpos(lastPoint.x, lastPoint.y)
 		pen.pu()
 

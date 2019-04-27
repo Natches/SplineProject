@@ -19,9 +19,9 @@ if __name__ == "__main__":
 	curve = sp.HermitienneCurve()
 	curve.p1 = Vector3D([-1,0,0])
 	curve.p2 = Vector3D([1,0,0])
-	curve.r1 = Vector3D([1,-10,0])
-	curve.r2 = Vector3D([-1,10,0])
-	curve.precision = 0.01
+	curve.r1 = Vector3D([-1,10,0])
+	curve.r2 = Vector3D([0,10,0])
+	curve.precision = 0.1
 	vertex = []
 	indices = []
 	i = 0
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 		renderer.render(scene)
 		renderer.swap_buffer()
 		deltatime = (time.datetime.now() - timeNow).microseconds / 1000
-		print(deltatime.__str__())
+		print(((int)(1000 / deltatime)).__str__())
 		renderer.pen.screen.ontimer(renderScene, 0)
 	renderer.pen.screen.ontimer(renderScene, 0)
 	renderer.pen.screen.listen()
