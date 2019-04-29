@@ -5,12 +5,16 @@ from Mesh import Mesh
 from Camera import Camera
 from Matrix4x4 import Inverse
 
-class DragableTurtle(RawTurtle):
-	__drag_function
-	
+class DragableTurtle(RawTurtle):	
 	def __init__(self, dragfunction=None, canvas=None, shape=_CFG ['shape' ], undobuffersize=_CFG ['undobuffersize' ], visible=_CFG ['visible' ]):
-		self.__drag_function = dragfunction
+		self.ondrag(dragfunction)
 		return super().__init__(canvas=canvas, shape=shape, undobuffersize=undobuffersize, visible=visible)
+
+	def compute_3D_position(self) -> Vector3D:
+		x = (2.0 * x) / turtle.screen.canvwidth - 1.0;
+		y = 1.0 - (2.0 * y) / turtle.screen.canvheight;
+		clip = Vector4D([x, y, -1, 1])
+		return Inverse(camera.view_perspective) * clip
 
 class Curve(Mesh):
 	__control_points = [Vector3D]
@@ -69,15 +73,6 @@ class HermitienneCurve(Curve):
 		return super().__init__()
 
 	def on_drag(self, turtle, camera, x, y):
-		i = -1
-		if(turtle == self.__point_controller[0]):
-			i = 0
-		else:
-			i = 1
-		x = (2.0 * x) / turtle.screen.canvwidth - 1.0;
-		y = 1.0 - (2.0 * y) / turtle.screen.canvheight;
-		clip = Vector4D([x, y, -1, 1])
-		eye = Inverse(camera.view_perspective) * clip
 		self._Curve__control_points[i] = Vector3D([eye.x * eye.z, eye.y * eye.z, 0])
 		self.__dirty = True
 		self.__turtle_dirty = True
