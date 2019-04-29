@@ -5,6 +5,12 @@ from Mesh import Mesh
 from Camera import Camera
 from Matrix4x4 import Inverse
 
+class DragableTurtle(RawTurtle):
+	__drag_function
+	
+	def __init__(self, dragfunction=None, canvas=None, shape=_CFG ['shape' ], undobuffersize=_CFG ['undobuffersize' ], visible=_CFG ['visible' ]):
+		self.__drag_function = dragfunction
+		return super().__init__(canvas=canvas, shape=shape, undobuffersize=undobuffersize, visible=visible)
 
 class Curve(Mesh):
 	__control_points = [Vector3D]
@@ -20,6 +26,15 @@ class Curve(Mesh):
 
 	def compute(self, value):
 		assert(False)
+
+	@property
+	def control_points(self):
+		return self.__control_points
+
+	@control_points.setter
+	def control_points(self, points=[]):
+		self.__dirty = True
+		self.__control_points = points
 
 	@property
 	def precision(self):
@@ -116,6 +131,8 @@ class HermitienneCurve(Curve):
 	def r2(self, value=Vector3D) -> Vector3D:
 		self.__dirty = True
 		self.__tan_line[1] = value
+
+
 
 	def init_mesh(self):
 		self._Mesh__vertex.clear()
