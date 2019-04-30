@@ -82,7 +82,7 @@ class HermitienneCurve(Curve):
 			idx = self.__point_controller.index(turtle, 0, self.__point_controller.__len__())
 			turtle.setpos(x, y)
 			eye = turtle.compute_3D_position(camera)
-			self._Curve__control_points[idx] = Vector3D([eye.x * eye.z, eye.y * eye.z, 0])
+			self._Curve__control_points[idx] = Vector3D([eye.x * eye.z, eye.y * eye.z, 1])
 			self.__dirty = True
 		except:
 			pass
@@ -93,12 +93,6 @@ class HermitienneCurve(Curve):
 				 self.__tan_line[0].value,  self.__tan_line[1].value])
 			self.__dirty = False
 		return self._Curve__geometric_matrix
-
-	def compute(self, value) -> Vector4D:
-		assert(value <= 1)
-		self.__build_geometric_matrix()
-		value_vec = Vector4D([value**3, value**2, value, 1])
-		return Vector4D.fromVector3(value_vec * self._Curve__geometric_matrix, 1)
 
 	@property
 	def p1(self) -> Vector3D:
@@ -136,32 +130,36 @@ class HermitienneCurve(Curve):
 		self.__dirty = True
 		self.__tan_line[1] = value
 
-
+	def compute(self, pointMatrix) -> np.ndarray:
+		return np.dot(pointMatrix, self.__build_geometric_matrix().value)
 
 	def init_mesh(self):
-		self._Mesh__vertex.clear()
-		self._Mesh__indices.clear()
 		i = 0
 		t = 0
+		pointNumber = (int)(1 / self._Curve__precision)
+		if(self._Mesh__vertex.__len__() != pointNumber):
+			self._Mesh__vertex = [Vector4D([0,0,0,0])] * pointNumber
+			self._Mesh__indices = [0] * pointNumber
+			for idx in range(0, pointNumber):
+				self._Mesh__indices[idx] = idx
+		pointMatrix = np.zeros((pointNumber, 4))
+		value_vec = [0,0,0,1]
 		while t < 1:
-			self._Mesh__vertex.append(self.compute(t))
-			self._Mesh__indices.append(i)
+			np.copyto(pointMatrix[i], value_vec)
 			i += 1
 			t += self._Curve__precision
+			value_vec[0] = t**3
+			value_vec[1] = t**2
+			value_vec[2] = t
+		pointMatrix = self.compute(pointMatrix)
+		for idx in range(0, pointNumber):
+			vec3 = pointMatrix[idx]
+			self._Mesh__vertex[idx] = Vector4D([vec3[0], vec3[1], vec3[2], 1])
+		self._Mesh__dirty = True
 
 	def draw(self, pen=Turtle, camera=Camera):
 		if(self.__dirty):
 			self.init_mesh()
-		if(self.__turtle_dirty):
-			mvp = camera.view_perspective * self.model_matrix
-			height = pen.getscreen().canvheight - 1
-			width = pen.getscreen().canvwidth - 1
-			position = self._Mesh__transform_point(self._Mesh__vertex[0], mvp, width, height)
-			self.__point_controller[0].setpos(position.x - 8, position.y - 8)
-			position = self._Mesh__transform_point(self._Mesh__vertex[self._Mesh__vertex.__len__() - 1], mvp, width, height)
-			self.__point_controller[1].setpos(position.x - 8, position.y - 8)
-			self.__turtle_dirty = False
-		self._Mesh__dirty = True
 		super(HermitienneCurve, self).draw(pen, camera)
 
 

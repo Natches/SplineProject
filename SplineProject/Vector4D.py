@@ -111,3 +111,7 @@ class Vector4D(object):
 	def value(self) -> np.ndarray:
 		return self.__value
 
+	@value.setter
+	def value(self, arr):
+		self.__value = arr
+
