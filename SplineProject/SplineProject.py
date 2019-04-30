@@ -16,16 +16,13 @@ def InitCamera() -> Camera:
 	return cam
 
 if __name__ == "__main__":
-	renderer = Renderer(1280, 720, 0)
+	renderer = Renderer(640, 360, 0)
 
 	scene = Scene()
-	curve = sp.HermitienneCurve(renderer.pen.screen.getcanvas(), camera)
-	curve.p1 = Vector3D([-1,0,0])
-	curve.p2 = Vector3D([1,0,0])
-	curve.r1 = Vector3D([-1,10,0])
-	curve.r2 = Vector3D([0,10,0])
-	curve.precision = 100
 	scene.camera = InitCamera()
+	curve = sp.HermitienneCurve(renderer.pen.screen.getcanvas(), scene.camera,
+							[Vector3D([-1,0,0]), Vector3D([1,0,0])],
+							[Vector3D([-1,10,0]), Vector3D([0,10,0])])
 	scene += curve
 
 	def renderScene():
