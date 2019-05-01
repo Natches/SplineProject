@@ -17,7 +17,6 @@ def InitCamera() -> Camera:
 
 if __name__ == "__main__":
 	renderer = Renderer(640, 360, 0)
-
 	scene = Scene()
 	scene.camera = InitCamera()
 	curve = sp.HermitienneCurve(renderer.pen.screen.getcanvas(), scene.camera,
@@ -26,6 +25,7 @@ if __name__ == "__main__":
 	scene += curve
 
 	def renderScene():
+		sp.canDrag = True
 		timeNow = time.datetime.now()
 		renderer.clear()
 		renderer.render(scene)

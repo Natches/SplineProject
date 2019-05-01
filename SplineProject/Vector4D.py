@@ -27,9 +27,9 @@ class Vector4D(object):
 	@Utils.OperatorDecorator
 	def __mul__(self, other) -> Vector4D:
 		if(isinstance(other, Matrix4x3)):
-			return Vector3D(np.matmul(self.__value, other.value))
+			return Vector3D(np.dot(self.__value, other.value))
 		elif(isinstance(other, math3d.Matrix4x4)):
-			return Vector4D(np.matmul(self.__value, other.value))
+			return Vector4D(np.dot(self.__value, other.value))
 		return Vector4D(self.__value * other)
 
 	@Utils.OperatorDecorator

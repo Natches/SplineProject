@@ -21,14 +21,14 @@ class Matrix4x4(object):
 
 	def __mul__(self, other) -> Matrix4x4:
 		if(isinstance(other, Vector4D) == False and isinstance(other, Matrix4x3) == False):
-			return Matrix4x4(np.matmul(self.__value, other.value))
+			return Matrix4x4(np.dot(self.__value, other.value))
 		elif(isinstance(other, Matrix4x3) == True):
-			return Matrix4x3(np.matmul(self.__value, other.value))
-		return Vector4D(np.matmul(self.__value, other.value))
+			return Matrix4x3(np.dot(self.__value, other.value))
+		return Vector4D(np.dot(self.__value, other.value))
 
 	@Utils.OperatorDecorator
 	def __imul__(self, other) -> Matrix4x4:
-		self.__value = np.matmul(self.__value, other)
+		self.__value = np.dot(self.__value, other)
 		return self
 
 	def __getitem__(self, key) -> []:

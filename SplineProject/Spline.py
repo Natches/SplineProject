@@ -5,6 +5,8 @@ from Mesh import Mesh
 from Camera import Camera
 from Matrix4x4 import Inverse
 
+canDrag = True
+
 class DragableTurtle(RawTurtle):	
 	def __init__(self, dragfunction=None, canvas=None, shape='circle'):
 		super().__init__(canvas=canvas, shape=shape)
@@ -12,18 +14,24 @@ class DragableTurtle(RawTurtle):
 		self.ondrag(lmd)
 		self.pu()
 		self.speed(0)
-
-	def compute_3D_position(self, camera) -> Vector3D:
-		x = (2.0 * self.xcor()) / self.screen.canvwidth - 1.0;
-		y = 1.0 - (2.0 * self.ycor()) / self.screen.canvheight;
-		clip = Vector4D([x, y, -1, 1])
-		return Inverse(camera.view_perspective) * clip
+		transform = self.shapetransform(1.1,0,0,1.1)
+		pass
 
 	def setpos(self, x=float, y=float):
 		super().setpos(x, y)
 
+	def hide(self):
+		super().hideturtle()
+
+	def show(self):
+		super().showturtle()
+
 	def drag_function(self, x, y, dragfunction):
 		dragfunction(self, x, y)
+		
+def compute_3D_position(camera, x, y, width, height) -> Vector3D:
+		clip = Vector4D([(2.0 * x) / width - 1.0, 1.0 - (2.0 * y) / height, -1, 1])
+		return Inverse(camera.view_perspective) * clip
 
 class Curve(Mesh):
 	__control_points = []
@@ -63,7 +71,7 @@ class Curve(Mesh):
 
 class HermitienneCurve(Curve):
 	__dirty = True
-	__turtle_dirty = True
+	__turtle_dirty = []
 	__tan_line = []
 	__point_controller = []
 
@@ -72,20 +80,23 @@ class HermitienneCurve(Curve):
 		self.__tan_line = tanLine
 		lmd = lambda turtle, x, y: self.on_drag(turtle, camera, x, y)
 		self.__point_controller = [DragableTurtle(lmd, canvas), DragableTurtle(lmd, canvas)]
+		self.__turtle_dirty = [True] * self.__point_controller.__len__()
 		self._Curve__constant_matrix = Matrix4x4([[2, -2, 1, 1], [-3, 3, -2, -1], [0, 0, 1, 0], [1, 0, 0, 0]])
 		self.__dirty = True
-		self.__turtle_dirty = True
 		return super().__init__()
 
 	def on_drag(self, turtle, camera, x, y):
-		try:
-			idx = self.__point_controller.index(turtle, 0, self.__point_controller.__len__())
-			turtle.setpos(x, y)
-			eye = turtle.compute_3D_position(camera)
-			self._Curve__control_points[idx] = Vector3D([eye.x * eye.z, eye.y * eye.z, 1])
-			self.__dirty = True
-		except:
-			pass
+		global canDrag
+		if(canDrag):
+			try:
+				idx = self.__point_controller.index(turtle, 0, self.__point_controller.__len__())
+				self.__turtle_dirty[idx] = True
+				eye = compute_3D_position(camera, x, y, turtle.screen.canvwidth, turtle.screen.canvheight)
+				self._Curve__control_points[idx] = Vector3D([eye.x * eye.z, eye.y * eye.z, 0])
+				self.__dirty = True
+			except:
+				pass
+		canDrag = False
 
 	def __build_geometric_matrix(self):
 		if(self.__dirty):
@@ -144,7 +155,7 @@ class HermitienneCurve(Curve):
 				self._Mesh__indices[idx] = idx
 		pointMatrix = np.zeros((pointNumber, 4))
 		value_vec = [0,0,0,1]
-		while t < 1:
+		while t < 0.9999:
 			np.copyto(pointMatrix[i], value_vec)
 			i += 1
 			t += self._Curve__precision
@@ -155,12 +166,20 @@ class HermitienneCurve(Curve):
 		for idx in range(0, pointNumber):
 			vec3 = pointMatrix[idx]
 			self._Mesh__vertex[idx] = Vector4D([vec3[0], vec3[1], vec3[2], 1])
-		self._Mesh__dirty = True
 
 	def draw(self, pen=Turtle, camera=Camera):
 		if(self.__dirty):
 			self.init_mesh()
+			self._Mesh__dirty = True
+			self.__dirty = False
 		super(HermitienneCurve, self).draw(pen, camera)
+		nextPoint = 0
+		for idx in range(0, self.__turtle_dirty.__len__()):
+			if(self.__turtle_dirty[idx]):
+				point = self._Mesh__transformed_points[nextPoint]
+				self.__point_controller[idx].setpos(point.x, point.y)
+				self.__turtle_dirty[idx] = False
+			nextPoint = self._Mesh__transformed_points.__len__() - 1
 
 
 

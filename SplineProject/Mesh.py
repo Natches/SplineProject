@@ -5,6 +5,7 @@ import Camera as cam
 import math
 import copy
 import Utils
+import numpy as np
 
 class Mesh(object):
 	__dirty = True
@@ -77,10 +78,13 @@ class Mesh(object):
 		mvp = camera.view_perspective * self.model_matrix
 		height = pen.getscreen().canvheight - 1
 		width = pen.getscreen().canvwidth - 1
-		if(dirty):
+		if(self.__transformed_points.__len__() != self.__vertex.__len__()):
 			self.__transformed_points = [Vector2D()] * self.__vertex.__len__()
-			self.__transformed_points[:] = [self.__transform_point(vertex, mvp, width, height) for vertex in self.__vertex]
-
+		
+		if(dirty):
+			array = np.transpose(np.dot(mvp.value, np.transpose(np.array([vertex.value for vertex in self.__vertex]))))
+			self.__transformed_points[:] = [self.__transform_point(Vector4D(vertex), width, height) for vertex in array]
+		
 		lastPoint = self.__transformed_points[self.__indices[0]]
 		pen.setpos(lastPoint.x, lastPoint.y)
 		for idx in self.__indices:
@@ -100,12 +104,9 @@ class Mesh(object):
 				pen.setpos(transformedPoint.x, transformedPoint.y)
 				pen.pu()
 				lastPoint = transformedPoint
-			pen.setpos(lastPoint.x, lastPoint.y)
 		pen.pu()
 
-	def __transform_point(self, vertex=Vector4D, mvp=Matrix4x4, width=int, height=int) -> Vector2D:
-		vertex = (mvp * vertex)
+	def __transform_point(self, vertex=Vector4D, width=int, height=int) -> Vector2D:
 		vertex = vertex.xyz.__div__(vertex.w)
-		vertex = cam.From3DSpaceToScreen(vertex, width, height)
-		return vertex
+		return cam.From3DSpaceToScreen(vertex, width, height)
 
