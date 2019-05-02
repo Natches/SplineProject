@@ -85,14 +85,14 @@ class Mesh(object):
 			array = np.transpose(np.dot(mvp.value, np.transpose(np.array([vertex.value for vertex in self.__vertex]))))
 			self.__transformed_points[:] = [self.__transform_point(Vector4D(vertex), width, height) for vertex in array]
 		
-		lastPoint = self.__transformed_points[self.__indices[0]]
+		lastPoint = copy.deepcopy(self.__transformed_points[self.__indices[0]])
 		pen.setpos(lastPoint.x, lastPoint.y)
 		lastPointOutside = lastPoint.x > width or lastPoint.y > height or lastPoint.y < 0.0 or lastPoint.x < 0.0
 		transformedPointOutside = False
 		for idx in self.__indices:
-			position = self.__transformed_points[idx]
+			position = copy.deepcopy(self.__transformed_points[idx])
 			transformedPointOutside = position.x > width or position.y > height or position.y < 0.0 or position.x < 0.0
-			if(not lastPointOutside and not transformedPointOutside):
+			if(not lastPointOutside or not transformedPointOutside):
 				if(lastPointOutside or transformedPointOutside):
 					position = Utils.FindIntersection(lastPoint, position, width, height)
 					if(position.__len__() > 0):
