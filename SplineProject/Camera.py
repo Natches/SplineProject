@@ -15,10 +15,27 @@ class Camera(object):
 	__at = Vector3D()
 	__up = Vector3D()
 
+	__orthoR = 0
+	__orthoH = 0
+
 	__view_Matrix = Matrix4x4()
 	__perspective_Matrix = Matrix4x4()
+	__orthographic_Matrix = Matrix4x4()
 
 	__VP = Matrix4x4();
+
+	__mode = 'persp'
+
+	def __init__(self, mode='persp'):
+		self.__mode = mode
+
+	@property
+	def mode(self):
+		return self.__mode
+
+	@mode.setter
+	def mode(self, value=''):
+		self.__mode = value
 
 	@property
 	def view_perspective(self) -> Matrix4x4:
@@ -33,6 +50,14 @@ class Camera(object):
 		self.__nearZ = nearZ
 		self.__farZ = farZ
 		self.__BuildPerspective()
+		self.__dirty = True
+
+	def update_ortho(self, width = 0.0, height = 0.0, nearZ = 0.0, farZ = 0.0):
+		self.__orthoR = width * 0.5
+		self.__orthoH = height * 0.5
+		self.__nearZ = nearZ
+		self.__farZ = farZ
+		self.__BuildOrtho()
 		self.__dirty = True
 
 	def update_view(self, eye=Vector3D, at=Vector3D, up=Vector3D):
@@ -90,8 +115,19 @@ class Camera(object):
 										[0.0, 0.0, -1.0, 0.0]]);
 		return self.__perspective_Matrix
 
+	def __BuildOrtho(self) -> Matrix4x4:
+		inv_fsubn = -1.0 / (self.__farZ - self.__nearZ);
+		self.__orthographic_Matrix = Matrix4x4([[1.0 / self.__orthoR, 0.0, 0.0, 0.0],
+										[0.0, 1.0 / self.__orthoH, 0.0, 0.0],
+										[0.0, 0.0, inv_fsubn * 2, 0.0],
+										[0.0, 0.0, inv_fsubn * (self.__farZ + self.__nearZ), 1.0]]);
+		return self.__orthographic_Matrix
+
 	def __BuildVP(self):
-		self.__VP = self.__BuildPerspective() * self.__BuildView()
+		if(self.mode == 'persp'):
+			self.__VP = self.__BuildPerspective() * self.__BuildView()
+		elif(self.mode == 'ortho'):
+			self.__VP = self.__BuildOrtho() * self.__BuildView()
 
 def From3DSpaceToScreen(point=Vector3D, width=int, height=int) -> Vector2D:
 	x = math.floor((point.x / -point.z) * width + width * 0.5)
