@@ -12,6 +12,7 @@ import Spline as sp
 def InitCamera() -> Camera:
 	cam = Camera('ortho')
 	cam.update_ortho(20, 20, 1, 100)
+	cam.update_perspective(60, 16/9, 1, 100)
 	cam.update_view(Vector3D([0, 0.00000000001, -10]), Vector3D([0, 0.0, 0]), Vector3D([0.0, 1, 0.0]))
 	return cam
 

@@ -87,23 +87,22 @@ class Mesh(object):
 		
 		lastPoint = self.__transformed_points[self.__indices[0]]
 		pen.setpos(lastPoint.x, lastPoint.y)
+		lastPointOutside = lastPoint.x > width or lastPoint.y > height or lastPoint.y < 0.0 or lastPoint.x < 0.0
+		transformedPointOutside = False
 		for idx in self.__indices:
-			transformedPoint = self.__transformed_points[idx]
-			if(dirty):
-				position = Utils.FindIntersection(lastPoint, transformedPoint, width, height)
-				if(position.__len__() > 0):
-					position = position[1]
-					pen.pd()
-					pen.setpos(position.x, position.y)
-					pen.pu()
-					lastPoint = position
-				else:
-					lastPoint = transformedPoint
-			else:
+			position = self.__transformed_points[idx]
+			transformedPointOutside = position.x > width or position.y > height or position.y < 0.0 or position.x < 0.0
+			if(not lastPointOutside and not transformedPointOutside):
+				if(lastPointOutside or transformedPointOutside):
+					position = Utils.FindIntersection(lastPoint, position, width, height)
+					if(position.__len__() > 0):
+						position = position[1]
 				pen.pd()
-				pen.setpos(transformedPoint.x, transformedPoint.y)
+				pen.setpos(position.x, position.y)
 				pen.pu()
-				lastPoint = transformedPoint
+			lastPoint = position
+			pen.setpos(lastPoint.x, lastPoint.y)
+			lastPointOutside = transformedPointOutside
 		pen.pu()
 
 	def __transform_point(self, vertex=Vector4D, width=int, height=int) -> Vector2D:
