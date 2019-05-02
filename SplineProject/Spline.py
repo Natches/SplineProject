@@ -8,14 +8,14 @@ from Matrix4x4 import Inverse
 canDrag = True
 
 class DragableTurtle(RawTurtle):	
-	def __init__(self, dragfunction=None, canvas=None, shape='circle'):
-		super().__init__(canvas=canvas, shape=shape)
+	def __init__(self, dragfunction=None, canvas=None, shape='square'):
+		super().__init__(canvas=canvas, shape=shape, undobuffersize=0)
+		self.setundobuffer(None)
 		lmd = lambda x, y: self.drag_function(x, y, dragfunction)
 		self.ondrag(lmd)
 		self.pu()
 		self.speed(0)
-		transform = self.shapetransform(1.1,0,0,1.1)
-		pass
+		self.shapetransform(1.1,0,0,1.1)
 
 	def setpos(self, x=float, y=float):
 		super().setpos(x, y)

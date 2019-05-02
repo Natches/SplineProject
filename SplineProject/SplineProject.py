@@ -19,7 +19,7 @@ if __name__ == "__main__":
 	renderer = Renderer(640, 360, 0)
 	scene = Scene()
 	scene.camera = InitCamera()
-	curve = sp.HermitienneCurve(renderer.pen.screen.getcanvas(), scene.camera,
+	curve = sp.HermitienneCurve(renderer.pen.screen, scene.camera,
 							[Vector3D([-1,0,0]), Vector3D([1,0,0])],
 							[Vector3D([-1,10,0]), Vector3D([0,10,0])])
 	scene += curve
