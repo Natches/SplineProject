@@ -32,7 +32,7 @@ if __name__ == "__main__":
 		renderer.render(scene)
 		renderer.swap_buffer()
 		deltatime = (time.datetime.now() - timeNow).microseconds / 1000
-		print(((int)(1000 / deltatime)).__str__())
+		#print(((int)(1000 / deltatime)).__str__())
 		renderer.pen.screen.ontimer(renderScene, 0)
 	renderer.pen.screen.ontimer(renderScene, 0)
 

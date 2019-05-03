@@ -4,9 +4,20 @@ import turtle
 import tkinter as TK
 
 class Screen(turtle._Screen):
+
+	def onEvent(self,event):
+		self.getcanvas().hscroll.grid_forget()
+		self.getcanvas().vscroll.grid_forget()
+
 	def __init__(self):
 		super().__init__()
 		self._root.resizable(False, False)
+		self._root.bind( '<Configure>', self.onEvent)
+
+	def setup(self, width, height, startx, starty):
+		super().setup(width=width, height=height, startx=startx, starty=starty)
+		self.getcanvas().hscroll.grid_forget()
+		self.getcanvas().vscroll.grid_forget()
 
 	def setworldcoordinates(self, llx, lly, urx, ury):
 		if self.mode() != "world":
@@ -19,8 +30,8 @@ class Screen(turtle._Screen):
 		self.xscale = self.canvwidth / xspan
 		self.yscale = self.canvheight / yspan
 		self._setscrollregion(0, 0, wx, wy)
-		self.getcanvas().hscroll.grid_remove()
-		self.getcanvas().vscroll.grid_remove()
+		self.getcanvas().hscroll.grid_forget()
+		self.getcanvas().vscroll.grid_forget()
 
 
 
