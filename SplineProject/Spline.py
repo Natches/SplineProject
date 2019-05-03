@@ -93,7 +93,7 @@ class HermitienneCurve(Curve):
 				self.__turtle_dirty[idx] = True
 				eye = compute_3D_position(camera, x, y, turtle.screen.canvwidth, turtle.screen.canvheight)
 				eye = eye.xyz.__div__(eye.w)
-				self._Curve__control_points[idx] = Vector3D([eye.x * eye.z, eye.y * eye.z, 0])
+				self._Curve__control_points[idx] = Vector3D([eye.x * eye.z, eye.y * -eye.z, 0])
 				self.__dirty = True
 			except:
 				pass

@@ -76,8 +76,8 @@ class Mesh(object):
 	def draw(self, pen=Turtle, camera=Camera):
 		dirty = self.__dirty
 		mvp = camera.view_perspective * self.model_matrix
-		height = pen.getscreen().canvheight - 1
-		width = pen.getscreen().canvwidth - 1
+		height = pen.getscreen().canvheight
+		width = pen.getscreen().canvwidth
 		if(self.__transformed_points.__len__() != self.__vertex.__len__()):
 			self.__transformed_points = [Vector2D()] * self.__vertex.__len__()
 		

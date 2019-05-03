@@ -131,7 +131,7 @@ class Camera(object):
 
 def From3DSpaceToScreen(point=Vector3D, width=int, height=int) -> Vector2D:
 	x = math.floor((point.x / -point.z) * width + width * 0.5)
-	y = math.floor((point.y / point.z) * height + height * 0.5)
+	y = math.floor((point.y / -point.z) * height + height * 0.5)
 	return Vector2D([x, y])
 		
 

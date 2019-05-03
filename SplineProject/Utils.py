@@ -73,7 +73,7 @@ def ComputeHorizontalIntersection(vec1='math3d.Vector2D', vec2='math3d.Vector2D'
 		A = (vec2.y - vec1.y) / (vec2.x - vec1.x)
 	if (A != 0.0):
 		B = vec1.y - (A*vec1.x)
-		vec2.x = math.floor((edge.y - B) / A)
+		vec2.x = (edge.y - B) // A
 	vec2.y = edge.y
 
 def ComputeVerticalIntersection(vec1='math3d.Vector2D', vec2='math3d.Vector2D', edge='math3d.Vector2D'):

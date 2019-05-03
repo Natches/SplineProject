@@ -22,7 +22,7 @@ if __name__ == "__main__":
 	scene.camera = InitCamera()
 	curve = sp.HermitienneCurve(renderer.pen.screen, scene.camera,
 							[Vector3D([-1,0,0]), Vector3D([1,0,0])],
-							[Vector3D([-1,100,0]), Vector3D([0,100,0])])
+							[Vector3D([0,100,0]), Vector3D([0,100,0])])
 	scene += curve
 
 	def renderScene():
