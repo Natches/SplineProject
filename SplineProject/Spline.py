@@ -3,7 +3,7 @@ from math3d import Vector4D, Vector3D, Matrix4x4, Matrix4x3
 from turtle import RawTurtle, Canvas, Turtle
 from Mesh import Mesh
 from Camera import Camera
-from Matrix4x4 import Inverse
+import Utils
 
 canDrag = True
 
@@ -28,10 +28,7 @@ class DragableTurtle(RawTurtle):
 
 	def drag_function(self, x, y, dragfunction):
 		dragfunction(self, x, y)
-		
-def compute_3D_position(camera, x, y, width, height) -> Vector3D:
-		clip = Vector4D([(2.0 * x) / width - 1.0, 1.0 - (2.0 * y) / height, -1, 1])
-		return Inverse(camera.view_perspective) * clip
+
 
 class Curve(Mesh):
 	__control_points = []
@@ -91,8 +88,8 @@ class HermitienneCurve(Curve):
 			try:
 				idx = self.__point_controller.index(turtle, 0, self.__point_controller.__len__())
 				self.__turtle_dirty[idx] = True
-				eye = compute_3D_position(camera, x, y, turtle.screen.canvwidth, turtle.screen.canvheight)
-				eye = eye.xyz.__div__(eye.w)
+				eye = Utils.compute_3D_position(camera.view_perspective, x, y, turtle.screen.canvwidth, turtle.screen.canvheight)
+				eye = eye.__div__(eye.w)
 				self._Curve__control_points[idx] = Vector3D([eye.x * eye.z, eye.y * -eye.z, 0])
 				self.__dirty = True
 			except:
@@ -148,7 +145,7 @@ class HermitienneCurve(Curve):
 	def init_mesh(self):
 		i = 0
 		t = 0
-		pointNumber = (int)(1 / self._Curve__precision)
+		pointNumber = (int)(1 / self._Curve__precision) + 1
 		if(self._Mesh__vertex.__len__() != pointNumber):
 			self._Mesh__vertex = [Vector4D([0,0,0,0])] * pointNumber
 			self._Mesh__indices = [0] * pointNumber
@@ -156,13 +153,14 @@ class HermitienneCurve(Curve):
 				self._Mesh__indices[idx] = idx
 		pointMatrix = np.zeros((pointNumber, 4))
 		value_vec = [0,0,0,1]
-		while t < 0.9999:
+		while t < 1:
 			np.copyto(pointMatrix[i], value_vec)
 			i += 1
 			t += self._Curve__precision
 			value_vec[0] = t**3
 			value_vec[1] = t**2
 			value_vec[2] = t
+		np.copyto(pointMatrix[i], value_vec)
 		pointMatrix = self.compute(pointMatrix)
 		for idx in range(0, pointNumber):
 			vec3 = pointMatrix[idx]
@@ -181,8 +179,6 @@ class HermitienneCurve(Curve):
 				self.__point_controller[idx].setpos(point.x, point.y)
 				self.__turtle_dirty[idx] = False
 			nextPoint = self._Mesh__transformed_points.__len__() - 1
-
-
 
 
 

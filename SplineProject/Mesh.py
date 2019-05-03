@@ -107,5 +107,5 @@ class Mesh(object):
 
 	def __transform_point(self, vertex=Vector4D, width=int, height=int) -> Vector2D:
 		vertex = vertex.xyz.__div__(vertex.w)
-		return cam.From3DSpaceToScreen(vertex, width, height)
+		return Utils.From3DSpaceToScreen(vertex, width, height)
 

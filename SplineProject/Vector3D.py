@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
-from Vector2D import Vector2D
 import Utils
+from Vector2D import Vector2D
 
 class Vector3D(object):
 	__value = np.zeros(3)

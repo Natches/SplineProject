@@ -93,3 +93,17 @@ def Inside(vec='math3d.Vector2D', edge=Edge, width=int, height=int):
 		return vec.x >= 0.0
 	elif(edge == Edge.RIGHT):
 		return vec.x <= width
+
+def From3DSpaceToScreen(point='math3d.Vector3D', width=int, height=int) -> math3d.Vector2D:
+	x = (point.x / -point.z) * width + width * 0.5
+	y = (point.y / -point.z) * height + height * 0.5
+	return math3d.Vector2D([x, y])
+
+def compute_3D_position(mvp, x, y, width, height) -> math3d.Vector4D:
+	clip = math3d.Vector4D([(2.0 * x) / width - 1.0, 1.0 - (2.0 * y) / height, -1, 1])
+	return math3d.Inverse(mvp) * clip
+
+def compute_2D_position(pos, width, height):
+	posy = ((1-pos.y) * height) / 2
+	posx = ((pos.x + 1) * width) / 2 
+	return math3d.Vector2D([posx, posy])

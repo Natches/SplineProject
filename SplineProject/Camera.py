@@ -1,5 +1,4 @@
 import numpy as np
-from math3d import Matrix4x4, Vector3D, Vector4D, Vector2D
 import math3d
 import math
 
@@ -11,18 +10,18 @@ class Camera(object):
 	__nearZ = 0.0
 	__farZ = 0.0		
 
-	__eye = Vector3D()
-	__at = Vector3D()
-	__up = Vector3D()
+	__eye = math3d.Vector3D()
+	__at = math3d.Vector3D()
+	__up = math3d.Vector3D()
 
 	__orthoR = 0
 	__orthoH = 0
 
-	__view_Matrix = Matrix4x4()
-	__perspective_Matrix = Matrix4x4()
-	__orthographic_Matrix = Matrix4x4()
+	__view_Matrix = math3d.Matrix4x4()
+	__perspective_Matrix = math3d.Matrix4x4()
+	__orthographic_Matrix = math3d.Matrix4x4()
 
-	__VP = Matrix4x4();
+	__VP = math3d.Matrix4x4();
 
 	__mode = 'persp'
 
@@ -38,7 +37,7 @@ class Camera(object):
 		self.__mode = value
 
 	@property
-	def view_perspective(self) -> Matrix4x4:
+	def view_perspective(self) -> math3d.Matrix4x4:
 		if(self.__dirty):
 			self.__BuildVP()
 			self.__dirty = False
@@ -60,7 +59,7 @@ class Camera(object):
 		self.__BuildOrtho()
 		self.__dirty = True
 
-	def update_view(self, eye=Vector3D, at=Vector3D, up=Vector3D):
+	def update_view(self, eye=math3d.Vector3D, at=math3d.Vector3D, up=math3d.Vector3D):
 		self.__eye = eye
 		self.__at = at
 		self.__up = up
@@ -68,56 +67,56 @@ class Camera(object):
 		self.__dirty = True
 
 	@property
-	def eye(self) -> Vector3D:
+	def eye(self) -> math3d.Vector3D:
 		return self.__eye
 
 	@property
-	def at(self) -> Vector3D:
+	def at(self) -> math3d.Vector3D:
 		return self.__at
 
 	@property
-	def up(self) -> Vector3D:
+	def up(self) -> math3d.Vector3D:
 		return self.__up
 
 	@eye.setter
-	def eye(self, value=Vector3D) -> Vector3D:
+	def eye(self, value=math3d.Vector3D) -> math3d.Vector3D:
 		self.__eye = value
 		self.__dirty = True
 
 	@at.setter
-	def at(self, value=Vector3D) -> Vector3D:
+	def at(self, value=math3d.Vector3D) -> math3d.Vector3D:
 		self.__at = value
 		self.__dirty = True
 
 	@up.setter
-	def up(self, value=Vector3D) -> Vector3D:
+	def up(self, value=math3d.Vector3D) -> math3d.Vector3D:
 		self.__up = value
 		self.__dirty = True
 
-	def __BuildView(self) -> Matrix4x4:
+	def __BuildView(self) -> math3d.Matrix4x4:
 		minusEye = -self.eye
 		zc = (self.eye - self.__at).normalize()
 		xc = math3d.Cross(self.up, zc).normalize()
 		yc = math3d.Cross(zc, xc);
-		self.__view_Matrix = Matrix4x4([[xc.x, xc.y, xc.z, minusEye.dot(xc)],
+		self.__view_Matrix = math3d.Matrix4x4([[xc.x, xc.y, xc.z, minusEye.dot(xc)],
 						 [yc.x, yc.y, yc.z, minusEye.dot(yc)],
 						 [zc.x, zc.y, zc.z, minusEye.dot(zc)],
 						 [0,0,0,1]])
 		return self.__view_Matrix
 
-	def __BuildPerspective(self) -> Matrix4x4:
+	def __BuildPerspective(self) -> math3d.Matrix4x4:
 		tanHalfFov = np.tan(np.radians(self.__fov * 0.5));
 		inv_tan = 1.0 / tanHalfFov;
 		inv_fsubn = -1.0 / (self.__farZ - self.__nearZ);
-		self.__perspective_Matrix = Matrix4x4([[inv_tan / self.__aspect, 0.0, 0.0, 0.0],
+		self.__perspective_Matrix = math3d.Matrix4x4([[inv_tan / self.__aspect, 0.0, 0.0, 0.0],
 										[0.0, inv_tan, 0.0, 0.0],
 										[0.0, 0.0, inv_fsubn * (self.__farZ + self.__nearZ), inv_fsubn * (self.__farZ * self.__nearZ) * 2.0],
 										[0.0, 0.0, -1.0, 0.0]]);
 		return self.__perspective_Matrix
 
-	def __BuildOrtho(self) -> Matrix4x4:
+	def __BuildOrtho(self) -> math3d.Matrix4x4:
 		inv_fsubn = -1.0 / (self.__farZ - self.__nearZ);
-		self.__orthographic_Matrix = Matrix4x4([[1.0 / self.__orthoR, 0.0, 0.0, 0.0],
+		self.__orthographic_Matrix = math3d.Matrix4x4([[1.0 / self.__orthoR, 0.0, 0.0, 0.0],
 										[0.0, 1.0 / self.__orthoH, 0.0, 0.0],
 										[0.0, 0.0, inv_fsubn * 2, 0.0],
 										[0.0, 0.0, inv_fsubn * (self.__farZ + self.__nearZ), 1.0]]);
@@ -128,11 +127,6 @@ class Camera(object):
 			self.__VP = self.__BuildPerspective() * self.__BuildView()
 		elif(self.mode == 'ortho'):
 			self.__VP = self.__BuildOrtho() * self.__BuildView()
-
-def From3DSpaceToScreen(point=Vector3D, width=int, height=int) -> Vector2D:
-	x = math.floor((point.x / -point.z) * width + width * 0.5)
-	y = math.floor((point.y / -point.z) * height + height * 0.5)
-	return Vector2D([x, y])
 		
 
 

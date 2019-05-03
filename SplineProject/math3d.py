@@ -17,3 +17,10 @@ def Cross(a, b):
 	temp = np.cross(a.value, b.value)
 	return Vector3D(np.cross(a.value, b.value))
 
+
+def Transpose(matrice=Matrix4x4) -> Matrix4x4:
+	return Matrix4x4(np.transpose(matrice.value))
+
+def Inverse(matrice=Matrix4x4) -> Matrix4x4:
+	return Matrix4x4(np.linalg.inv(matrice.value))
+

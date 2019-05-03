@@ -38,9 +38,3 @@ class Matrix4x4(object):
 	@property
 	def value(self) -> np.ndarray:
 		return self.__value
-
-def Transpose(matrice=Matrix4x4) -> Matrix4x4:
-	return Matrix4x4(np.transpose(matrice.value))
-
-def Inverse(matrice=Matrix4x4) -> Matrix4x4:
-	return Matrix4x4(np.linalg.inv(matrice.value))
